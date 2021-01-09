@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Results For {{query}}{% endblock %}
+{% block content %}
+<h1 class="text-center">Results for {{query}}</h1>
+<hr>
+<div class="container">
+
+    <div class="row">
+        {% for movie_dict in res %}
+        <div class="col col-md-4">
+            <div class="container">
+                <a href="/show-movie-details/{{movie_dict['id']}}">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="{{movie_dict['image']}}" alt="">
+                        <div class="card-body">
+                            <h5 class="card-title">{{movie_dict['title']}}</h5>
+                            <p class="card-text">{{movie_dict['description']}}</p>
+                            <form action="#">
+                                <input type="hidden" name="image-source" value="{{movie_dict['image']}}">
+                            </form>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <hr>
+    {% endfor %}     
+    </div>
+   
+</div>
+{% endblock %}
+

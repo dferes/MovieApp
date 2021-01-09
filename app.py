@@ -4,8 +4,13 @@ from flask_debugtoolbar import DebugToolbarExtension
 from models import db
 from secret_key import key
 from api_key import api_key
+import requests
+import json
 
 CURRENT_USER_KEY = 'current_user'
+# Note that you are limited to 100 API calls per day...
+base_url = f"https://imdb-api.com/en/API/Search/{api_key}"
+cast_url = f"https://imdb-api.com/en/API/FullCast/{api_key}"
 
 app = Flask(__name__)
 
@@ -33,12 +38,45 @@ def homepage():
     return render_template('homepage.html')
 
 
-@app.route('/get-move-by-query')
+@app.route('/get-movie-by-query', methods=['GET'])
 def get_move_by_query():
-    title = request.args.get('search-query') # just assume the query is a title for now
-    res =  requests.get() # Pick up here. Need the base URL. Set it at the top
+    title = request.args.get('q') # just assume the query is a title for now
+    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-by-title/{title}") # Only works locally; fix this to accomodate bothe cases 
+    res = json.loads(res.text)['results']
+    # print(f"----------------------------------\n{res}\n--------------------------------------")
+    return render_template('search/show-query-results.html', res=res, query=title)
 
 
-@app.route('/api/get-movie-by-title', methods=["GET"])
+@app.route('/show-movie-details/<string:id>')
+def show_movie_details(id):
+    res = requests.get(f"{cast_url}/{id}")
+    res = json.loads(res.text)
+    image = request.args.get('image-source')
+    print(f"(((((((((((((((((((((({image}")
+    # for key, val in res.items():
+    #     print(f"    {key}: {val}")
+    #     print("\n")
+    full_title = res['fullTitle']
+    directors = res['directors']
+    writers = res['writers']
+    actors = res['actors']
+    for actor_dict in actors:
+        print(actor_dict)
+        print('\n')
+    
+    return render_template('show-movie-details.html', title=full_title, 
+        directors=directors, 
+        writers=writers,
+        actors=actors,
+        image=image)
+
+
+#-------------------------------------------------------------------------
+#                           API calls
+
+
+@app.route('/api/get-movie-by-title/<string:title>', methods=['GET'])
 def get_movie_my_title(title):
-    return jsonify('your mom')
+    res = requests.get(f"{base_url}/{title}").text
+
+    return jsonify(json.loads(res))

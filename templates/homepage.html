@@ -1,14 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}Homepage{% endblock %}
 {% block content %}
-<h1 class="text-center">Welcome</h1>
-<div class="container">
-    <form>
-        <div class="form-group">
-          <label for="search-query">Enter movie or show title...</label>
-          <input type="text" name="search-query" class="form-control" id="search-query">
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
+<div class="home-hero">
+  <h1>What're You Watching?</h1>
+  <h4>New to MovieApp?</h4>
+  <p>Sign up now to get your own personalized account!</p>
+  <a href="/signup" class="btn btn-primary">Sign up</a>
 </div>
 {% endblock %}
