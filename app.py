@@ -49,20 +49,18 @@ def get_move_by_query():
 
 @app.route('/show-movie-details/<string:id>')
 def show_movie_details(id):
-    res = requests.get(f"{cast_url}/{id}")
+    res = requests.get(f"http://127.0.0.1:5000/api/get-cast-information/{id}") # Only works locally
     res = json.loads(res.text)
+    # print('---------------------------------',res, '------------------------------')
     image = request.args.get('image-source')
-    print(f"(((((((((((((((((((((({image}")
+    print(f"(((((((((((((((((((((({image})))))))))))))))))))))")
     # for key, val in res.items():
     #     print(f"    {key}: {val}")
     #     print("\n")
     full_title = res['fullTitle']
     directors = res['directors']
     writers = res['writers']
-    actors = res['actors']
-    for actor_dict in actors:
-        print(actor_dict)
-        print('\n')
+    actors = res['actors'][:5] # limit relavent actors to top 5
     
     return render_template('show-movie-details.html', title=full_title, 
         directors=directors, 
@@ -72,11 +70,16 @@ def show_movie_details(id):
 
 
 #-------------------------------------------------------------------------
-#                           API calls
+#                         External API calls
 
 
 @app.route('/api/get-movie-by-title/<string:title>', methods=['GET'])
 def get_movie_my_title(title):
     res = requests.get(f"{base_url}/{title}").text
+    return jsonify(json.loads(res))
 
+
+@app.route('/api/get-cast-information/<string:id>', methods=['GET'])
+def get_full_cast_information(id):
+    res = requests.get(f"{cast_url}/{id}").text
     return jsonify(json.loads(res))
