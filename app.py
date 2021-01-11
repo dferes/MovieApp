@@ -11,6 +11,7 @@ CURRENT_USER_KEY = 'current_user'
 # Note that you are limited to 100 API calls per day...
 base_url = f"https://imdb-api.com/en/API/Search/{api_key}"
 cast_url = f"https://imdb-api.com/en/API/FullCast/{api_key}"
+wikipedia_url = f"https://imdb-api.com/en/API/Wikipedia/{api_key}" # followed by imdb id
 
 app = Flask(__name__)
 
@@ -49,24 +50,33 @@ def get_move_by_query():
 
 @app.route('/show-movie-details/<string:id>')
 def show_movie_details(id):
+    # print(f"The ID is: {id}")
     res = requests.get(f"http://127.0.0.1:5000/api/get-cast-information/{id}") # Only works locally
     res = json.loads(res.text)
     # print('---------------------------------',res, '------------------------------')
-    image = request.args.get('image-source')
-    print(f"(((((((((((((((((((((({image})))))))))))))))))))))")
     # for key, val in res.items():
     #     print(f"    {key}: {val}")
     #     print("\n")
     full_title = res['fullTitle']
     directors = res['directors']
     writers = res['writers']
-    actors = res['actors'][:5] # limit relavent actors to top 5
+    actors = res['actors'][:10] # limit relavent actors to top 10 for now
+    # print('ACTORS:\n\n', actors, '\n')
+    # print('DIRECTORS:\n\n', directors, '\n')
+    # print('WRITERS:\n\n', writers, '\n')
+    wiki_response = requests.get(f"http://127.0.0.1:5000/api/get-wikipedia-information/{id}") # only works locally
+    wiki_response = json.loads(wiki_response.text)
+    # for key in wiki_response.keys():
+    #     print(f"{key}\n\n")
+    print('--------------------------------------')
+    print(wiki_response['url'])
+    plot = wiki_response['plotShort']
     
     return render_template('show-movie-details.html', title=full_title, 
         directors=directors, 
         writers=writers,
         actors=actors,
-        image=image)
+        plot=plot)
 
 
 #-------------------------------------------------------------------------
@@ -82,4 +92,10 @@ def get_movie_my_title(title):
 @app.route('/api/get-cast-information/<string:id>', methods=['GET'])
 def get_full_cast_information(id):
     res = requests.get(f"{cast_url}/{id}").text
+    return jsonify(json.loads(res))
+
+
+@app.route('/api/get-wikipedia-information/<string:id>', methods=['GET'])
+def get_wikipedia_information(id):
+    res = requests.get(f"{wikipedia_url}/{id}").text
     return jsonify(json.loads(res))
