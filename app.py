@@ -6,6 +6,7 @@ from secret_key import key
 from api_key import api_key
 import requests
 import json
+from sqlalchemy.exc import IntegrityError
 
 CURRENT_USER_KEY = 'current_user'
 # Note that you are limited to 100 API calls per day...
@@ -39,6 +40,12 @@ def homepage():
     return render_template('homepage.html')
 
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    
+    return render_template('/signup_and_login/signup.html')
+
+
 @app.route('/get-movie-by-query', methods=['GET'])
 def get_move_by_query():
     title = request.args.get('q') # just assume the query is a title for now
@@ -68,8 +75,7 @@ def show_movie_details(id):
     wiki_response = json.loads(wiki_response.text)
     # for key in wiki_response.keys():
     #     print(f"{key}\n\n")
-    print('--------------------------------------')
-    print(wiki_response['url'])
+
     plot = wiki_response['plotShort']
     
     return render_template('show-movie-details.html', title=full_title, 
