@@ -1,12 +1,15 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db
+from models import db, User, Follows
 from secret_key import key
 from api_key import api_key
 import requests
 import json
 from sqlalchemy.exc import IntegrityError
+from forms import NewUserForm
+from user_functions import signup, authenticate
+
 
 CURRENT_USER_KEY = 'current_user'
 # Note that you are limited to 100 API calls per day...
@@ -41,9 +44,31 @@ def homepage():
 
 
 @app.route('/signup', methods=['GET', 'POST'])
-def signup():
+def signup_():
+    form = NewUserForm()
+
+    if form.validate_on_submit():
+        try:
+            user = signup(
+                username=form.username.data,
+                email=form.email.data,
+                password=form.password.data,
+                user_pic_url=form.user_pic_url.data or User.user_pic_url.default.arg
+            )
+            
+            db.session.add(user)
+            db.session.commit()
+        
+        except IntegrityError:
+            flash('Username already taken', danger)
+            return render_template('signup_and_login/signup.html')
+        
+        do_login(user)
+        flash(f"Welcome to MovieBuddy, {user.username}", 'success')
+        return redirect(f"/users/{user.id}")
     
-    return render_template('/signup_and_login/signup.html')
+    
+    return render_template('/signup_and_login/signup.html', form=form)
 
 
 @app.route('/get-movie-by-query', methods=['GET'])
@@ -84,6 +109,10 @@ def show_movie_details(id):
         actors=actors,
         plot=plot)
 
+@app.route('/users/<int:id>')
+def show_users_own_profile(id):
+    user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    return render_template('user/user_profile.html', user=user)
 
 #-------------------------------------------------------------------------
 #                         External API calls
