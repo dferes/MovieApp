@@ -15,14 +15,14 @@
           <div class="navbar-header">
             <a href="/" class="navbar-brand">
               <img src="/static/images/MovieApp-logo.png" alt="logo">
-              <span>MovieApp</span>
+              <span>MovieBuddy</span>
             </a>
           </div>
           <ul class="nav navbar-nav navbar-right">
             {% if request.endpoint != None %}
             <li>
               <form class="navbar-form navbar-right" action="/get-movie-by-query">
-                <input name="q" class="form-control" placeholder="Enter a movie or show title..." id="search">
+                <input name="q" class="form-control" placeholder="Movie, Show, Actor..." id="search">
                 <button class="btn btn-default">
                   <span class="fa fa-search"></span>
                 </button>
@@ -38,8 +38,7 @@
                 <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}">
               </a>
             </li>
-            <!-- "messages" needs to be replaced with a link to the users list -->
-            <li><a href="/messages/new">New Message</a></li>
+            <li><a href="/user-list/new">My List</a></li>
             <li><a href="/logout">Log out</a></li>
             {% endif %}
           </ul>
