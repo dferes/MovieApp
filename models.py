@@ -3,12 +3,20 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class Follows(db.Model):
+    __tablename__ = 'follows'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    following_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True)
+    followed_by_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True)
+
+
 class User(db.Model):
     __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.Text, nullable=False, unique=True)
     username = db.Column(db.Text, nullable=False, unique=True)
+    email = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     user_pic_url = db.Column(db.Text, default="/static/images/default_user_pic.png")
     header_image_url = db.Column(db.Text, default="/static/images/default-header.jpg")
@@ -27,13 +35,3 @@ class User(db.Model):
         primaryjoin=(Follows.following_id == id),
         secondaryjoin=(Follows.followed_by_id == id)
     )
-    
-    
-class Follows(db.Model):
-    __tablename__ = 'follows'
-    
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    following_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True)
-    followed_by_id = db.Column(db.Integer, db.ForeignKey('users.id, ondelete='cascade'), primary_key=True)
-    
-
