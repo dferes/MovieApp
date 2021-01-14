@@ -44,3 +44,15 @@ class MovieList(db.Model):
     owner = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
     title = db.Column(db.Text, nullable=False, unique=True)
     description = db.Column(db.Text)
+    list_image_url = db.Column(db.Text)
+    
+    
+class Movie(db.Model):
+    "Move or Show"
+    __tablename__ = 'movies'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    IMDB_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False, unique=True)
+    poster_url = db.Column(db.Text, nullable=Fasle)
+    description = db.Column()
