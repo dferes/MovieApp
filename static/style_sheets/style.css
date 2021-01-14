@@ -79,9 +79,10 @@ nav form.navbar-form {
     border: 2px solid #007bff;
 }
   
-/* on "onboarding" pages (signup & login), the navbar is
-    different: no search box, the logo is centered, and it has
-    a background color.
+/* TODO: on onboarding pages (signup & login), the navbar will be different: 
+    . the logo will be centered 
+    . it will have a background color
+    . no search bar
 */
   
 .onboarding > .navbar {
@@ -146,7 +147,7 @@ nav + .container {
     text-align: center;
     padding: 1rem;
     text-shadow: 0 0 8px #030608;
-    /* play around with the colors....looks kind of shitty */
+    /* play around with the colors and opacity....looks terrible */
 }
   
 .home-hero .btn {
@@ -168,4 +169,18 @@ nav + .container {
     right: 0;
     bottom: 0;
     background: rgba(255, 255, 255, 0.3);
+}
+
+.btn {
+    border-radius: 50px;
+}
+
+#user_form input.form-control {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px;
+  }
+
+.form-container {
+    margin-top: 7rem;
 }
