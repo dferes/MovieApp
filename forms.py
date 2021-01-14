@@ -31,3 +31,4 @@ class NewListForm(FlaskForm):
     
     title = StringField('List Name', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[Optional()])
+    list_image_url = StringField('List Image', validators=[Optional(), URL()])
