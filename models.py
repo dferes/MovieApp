@@ -35,3 +35,12 @@ class User(db.Model):
         primaryjoin=(Follows.following_id == id),
         secondaryjoin=(Follows.followed_by_id == id)
     )
+
+
+class MovieList(db.Model):
+    __tablename__ = 'movie_lists'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    owner = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
+    title = db.Column(db.Text, nullable=False, unique=True)
+    description = db.Column(db.Text)
