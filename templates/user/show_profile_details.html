@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}{{user.username}}'s Profile{% endblock %}
+{% block content %}
+
+<div class="full-width movie-buddy-hero" style="background-image: url('{{ user.header_image_url }}');"></div>
+<img src="{{ user.user_pic_url }}" class="profile-avatar" alt="Image for {{ user.username }}">
+<div class="row full-width">
+  <div class="container">
+    <div class="row justify-content-end">
+      <div class="col-9">
+        <ul class="user-stats nav nav-pills">
+          <li class="stat">
+            <p class="small">My Lists</p>
+            <h4>
+              <a href="/users/{{ user.id }}/my-lists">{{ user.lists | length }}</a>
+            </h4>
+          </li>
+          <li class="stat">
+            <p class="small">Following</p>
+            <h4>
+              <a href="/users/{{ user.id }}/following">{{ user.following | length }}</a>
+            </h4>
+          </li>
+          <li class="stat">
+            <p class="small">Followers</p>
+            <h4>
+              <a href="/users/{{ user.id }}/followers">{{ user.followers | length }}</a>
+            </h4>
+          </li>
+          <div class="ml-auto">
+            <a href="/users/profile-edit" class="btn btn-outline-secondary">Edit Profile</a>
+            <form method="POST" action="/users/delete" class="form-inline">
+              <button class="btn btn-outline-danger ml-2">Delete Profile</button>
+            </form>
+            <form method="POST" action="/users/stop-following/{{ user.id }}">
+              <button class="btn btn-primary">Unfollow</button>
+            </form>
+            <form method="POST" action="/users/follow/{{ user.id }}">
+              <button class="btn btn-outline-primary">Follow</button>
+            </form>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3">
+    <h4 class="sidebar-username">@{{ user.username }}</h4>
+    <p>{{user.bio}}</p>
+  </div>
+
+  {% block user_details %}
+  {% endblock %}
+
+  <!-- suggested movies and tv shows should go down here -->
+
+</div>
+
+{% endblock %}
