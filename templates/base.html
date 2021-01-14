@@ -8,6 +8,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
         <link rel="stylesheet" href="/static/style_sheets/style.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+
     </head>
     <body>
       <nav class="navbar navbar-expand">
@@ -38,7 +40,7 @@
                 <img src="{{ user.user_pic_url }}" alt="{{ user.username }}">
               </a>
             </li>
-            <li><a href="/user-list/new">My List</a></li>
+            <!-- <li><a href="/user-list/new">My List</a></li> -->
             <li><a href="/logout">Log out</a></li>
             {% endif %}
           </ul>
