@@ -22,20 +22,20 @@
             {% if request.endpoint != None %}
             <li>
               <form class="navbar-form navbar-right" action="/get-movie-by-query">
-                <input name="q" class="form-control" placeholder="Movie, Show, Actor..." id="search">
+                <input name="q" class="form-control" placeholder="Movie, Show, Actor, Director..." id="search">
                 <button class="btn btn-default">
                   <span class="fa fa-search"></span>
                 </button>
               </form>
             </li>
             {% endif %}
-            {% if not g.user %}
+            {% if not session['current_user'] %}
             <li><a href="/signup">Sign up</a></li>
             <li><a href="/login">Log in</a></li>
             {% else %}
             <li>
-              <a href="/users/{{ g.user.id }}">
-                <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}">
+              <a href="/users/{{ session['current_user'] }}">
+                <img src="{{ user.user_pic_url }}" alt="{{ user.username }}">
               </a>
             </li>
             <li><a href="/user-list/new">My List</a></li>
@@ -45,8 +45,15 @@
         </div>
       </nav>
 
-      {% block content %}
-      {% endblock %}
+      <div class="container">
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    
+        {% block content %}
+        {% endblock %}
+
+      </div>
     
       <script src="https://unpkg.com/jquery"></script>
     </body>
