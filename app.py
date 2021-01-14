@@ -40,7 +40,8 @@ def do_logout():
         
 @app.route('/')
 def homepage():
-    return render_template('homepage.html')
+    user = session.get(CURRENT_USER_KEY)
+    return render_template('homepage.html', user=user)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -69,6 +70,28 @@ def signup_():
     
     
     return render_template('/signup_and_login/signup.html', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = UserLoginForm()
+    
+    if form.validate_on_submit():
+        user = authenticate( form.username.data, form.password.data)
+        if user:
+            do_login(user)
+            # flash message here
+            return redirect('/')
+        flash('Invalid credentials. Please try again.')
+    
+    return render_template('user/login.html') 
+
+
+@app.route('/logout')
+def logout():
+    user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    do_logout()
+    return redirect('/')
 
 
 @app.route('/get-movie-by-query', methods=['GET'])
@@ -111,7 +134,7 @@ def show_movie_details(id):
 
 @app.route('/users/<int:id>')
 def show_users_own_profile(id):
-    user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    user = User.query.get_or_404(session.get(CURRENT_USER_KEY))
     return render_template('user/user_profile.html', user=user)
 
 #-------------------------------------------------------------------------
