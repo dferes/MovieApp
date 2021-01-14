@@ -203,7 +203,8 @@ def make_new_movie_list():
             db.session.commit()
         
         except IntegrityError:
-            flash('Generic Error Message For Now', 'danger')
+            flash('Generic Error Message For Now (come back)', 'danger')
+        return redirect(f"/users/{this_user.id}/my-lists")
         
     return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form)
 
