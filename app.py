@@ -8,7 +8,7 @@ import requests
 import json
 from sqlalchemy.exc import IntegrityError
 from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm
-from user_functions import signup, authenticate
+from user_functions import signup, authenticate, is_following, is_followed_by
 
 
 #k_jg1h63to
@@ -57,11 +57,11 @@ def pre_populate_user_edit_form_fields(form, user):
 
 @app.route('/')
 def homepage():
+    this_user = None
+    
     if CURRENT_USER_KEY in session:
         this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    else:
-        this_user = None
-        
+
     return render_template('homepage.html', this_user=this_user)
 
 
@@ -71,23 +71,23 @@ def signup_():
 
     if form.validate_on_submit():
         try:
-            user = signup(
+            this_user = signup(
                 username=form.username.data,
                 email=form.email.data,
                 password=form.password.data,
                 user_pic_url=form.user_pic_url.data or User.user_pic_url.default.arg
             )
             
-            db.session.add(user)
+            db.session.add(this_user)
             db.session.commit()
         
         except IntegrityError:
             flash('Username already taken', 'danger')
             return render_template('/signup_and_login/signup.html', form=form)
         
-        do_login(user)
-        flash(f"Welcome to MovieBuddy, {user.username}", 'success')
-        return redirect(f"/users/{user.id}")
+        do_login(this_user)
+        flash(f"Welcome to MovieBuddy, {this_user.username}", 'success')
+        return redirect(f"/users/{this_user.id}")
     
     
     return render_template('/signup_and_login/signup.html', form=form)
@@ -176,14 +176,14 @@ def show_user_lists(id):
 def show_user_following(id):
     user = User.query.get_or_404(id)
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    return render_template('user/following.html', user=user, this_user=this_user)
+    return render_template('user/following.html', user=user, this_user=this_user, is_following=is_following)
 
 
 @app.route('/users/<int:id>/followers', methods=['GET']) # todo
 def show_user_followers(id):
     user = User.query.get_or_404(id)
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    return render_template('user/followers.html', user=user, this_user=this_user)
+    return render_template('user/followers.html', user=user, this_user=this_user, is_following=is_following)
 
 
 @app.route('/users/new-list', methods=['GET', 'POST']) # todo
@@ -196,7 +196,8 @@ def make_new_movie_list():
             new_list = MovieList(
                 owner=this_user.id,
                 title=form.title.data,
-                description=form.description.data
+                description=form.description.data,
+                list_image_url=form.list_image_url.data
             )
             
             db.session.add(new_list)
@@ -204,6 +205,7 @@ def make_new_movie_list():
         
         except IntegrityError:
             flash('Generic Error Message For Now (come back)', 'danger')
+        
         return redirect(f"/users/{this_user.id}/my-lists")
         
     return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form)
@@ -240,6 +242,28 @@ def delete_user():
     db.session.commit()
 
     return redirect("/")
+
+
+@app.route('/users/follow/<int:follow_id>', methods=['POST'])
+def add_follow(follow_id):
+    
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    followed_user = User.query.get_or_404(follow_id)
+    this_user.following.append(followed_user)
+    db.session.commit()
+
+    return redirect(f"/users/{this_user.id}/following")
+
+
+@app.route('/users/stop-following/<int:followed_user_id>', methods=['POST'])
+def unfollow(followed_user_id):
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    followed_user = User.query.get_or_404(followed_user_id)
+    this_user.following.remove(followed_user)
+    db.session.commit()
+    
+    return redirect(f"/users/{this_user.id}/following")
+    
 #-------------------------------------------------------------------------
 #                         External API calls
 
