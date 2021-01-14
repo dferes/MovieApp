@@ -7,7 +7,7 @@ from api_key import api_key
 import requests
 import json
 from sqlalchemy.exc import IntegrityError
-from forms import NewUserForm
+from forms import NewUserForm, UserLoginForm
 from user_functions import signup, authenticate
 
 
@@ -61,8 +61,8 @@ def signup_():
             db.session.commit()
         
         except IntegrityError:
-            flash('Username already taken', danger)
-            return render_template('signup_and_login/signup.html')
+            flash('Username already taken', 'danger')
+            return render_template('/signup_and_login/signup.html', form=form)
         
         do_login(user)
         flash(f"Welcome to MovieBuddy, {user.username}", 'success')
@@ -82,9 +82,9 @@ def login():
             do_login(user)
             # flash message here
             return redirect('/')
-        flash('Invalid credentials. Please try again.')
+        flash('Invalid credentials. Please try again.', 'danger')
     
-    return render_template('user/login.html') 
+    return render_template('/signup_and_login/login.html', form=form) 
 
 
 @app.route('/logout')
