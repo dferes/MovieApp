@@ -37,10 +37,10 @@
             {% else %}
             <li>
               <a href="/users/{{ session['current_user'] }}">
-                <img src="{{ user.user_pic_url }}" alt="{{ user.username }}">
+                <img src="{{ this_user.user_pic_url }}" alt="{{ this_user.username }}">
               </a>
             </li>
-            <!-- <li><a href="/user-list/new">My List</a></li> -->
+            <li><a href="/users/new-list">New List</a></li>
             <li><a href="/logout">Log out</a></li>
             {% endif %}
           </ul>
