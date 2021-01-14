@@ -273,3 +273,12 @@ nav + .container {
     line-height: 1.5rem;
     word-wrap: break-word;
 }
+
+.edit-btn-area {
+    display: flex;
+    justify-content: space-between;
+}
+  
+.edit-btn-area > .btn {
+    width: 48%;
+}
