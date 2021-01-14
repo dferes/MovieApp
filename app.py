@@ -7,7 +7,7 @@ from api_key import api_key
 import requests
 import json
 from sqlalchemy.exc import IntegrityError
-from forms import NewUserForm, UserLoginForm
+from forms import NewUserForm, UserLoginForm, EditUserForm
 from user_functions import signup, authenticate
 
 #k_jg1h63to
@@ -40,6 +40,22 @@ def do_logout():
     if CURRENT_USER_KEY in session:
         del session[CURRENT_USER_KEY]
         
+
+def update_user_data(form, user):
+    user.bio = form.bio.data if form.bio.data else user.bio
+    user.header_image_url = form.header_image_url.data if form.header_image_url.data else user.header_image_url
+    user.username = form.username.data if form.username.data else user.username
+    user.email = form.email.data if form.email.data else user.email
+    user.user_pic_url = form.user_pic_url.data if form.user_pic_url.data else user.user_pic_url
+    
+
+def pre_populate_user_edit_form_fields(form, user):
+    form.username.data = user.username
+    form.email.data = user.email
+    form.user_pic_url.data = user.user_pic_url if user.user_pic_url != user.user_pic_url[0:7] != '/static' else None 
+    form.bio.data = user.bio if user.bio else None
+        
+
 @app.route('/')
 def homepage():
     if CURRENT_USER_KEY in session:
@@ -145,7 +161,7 @@ def show_movie_details(id):
 
 @app.route('/users/<int:id>')
 def show_users_own_profile(id):
-    user = User.query.get_or_404(session.get(CURRENT_USER_KEY))
+    user = User.query.get_or_404(id)
     return render_template('user/show_profile_details.html', user=user)
 
 
@@ -166,9 +182,42 @@ def show_user_followers(id):
     user = User.query.get_or_404(session[CURRENT_USER_KEY])
     return render_template('user/followers.html', user=user)
 
+
+@app.route('/users/<int:id>/edit-profile', methods=['GET', 'POST']) # POST or PATCH, some of the info is new, some is being replaced..
+def edit_user_profile(id):
+    form = EditUserForm()
+    user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    
+    if form.validate_on_submit():
+        update_user_data(form, user) 
+        
+        if authenticate(user.username, form.password.data):        
+            db.session.add(user)
+            db.session.commit()
+            flash('Your account has been updated.', 'success')
+        else:
+            flash('Incorrect password.', 'danger')
+        
+        return redirect(f"/users/{user.id}")
+    
+    pre_populate_user_edit_form_fields(form, user)
+    
+    return render_template('user/edit_profile.html', user=user, form=form)
+
+
+@app.route('/users/delete', methods=['GET', 'DELETE'])
+def delete_user():
+    user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    do_logout()
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return redirect("/")
 #-------------------------------------------------------------------------
 #                         External API calls
 
+# Refactor these into one function
 
 @app.route('/api/get-movie-by-title/<string:title>', methods=['GET'])
 def get_movie_my_title(title):
