@@ -27,17 +27,20 @@
               <a href="/users/{{ user.id }}/followers">{{ user.followers | length }}</a>
             </h4>
           </li>
+          {% if session['current_user'] == user.id %}
           <div class="ml-auto">
-            <a href="/users/profile-edit" class="btn btn-outline-secondary">Edit Profile</a>
-            <form method="POST" action="/users/delete" class="form-inline">
+            <a href="/users/{{user.id}}/edit-profile" class="btn btn-outline-secondary">Edit Profile</a>
+            <form method="DELETE" action="/users/delete" class="form-inline">
               <button class="btn btn-outline-danger ml-2">Delete Profile</button>
             </form>
+            {% else %}
             <form method="POST" action="/users/stop-following/{{ user.id }}">
               <button class="btn btn-primary">Unfollow</button>
             </form>
             <form method="POST" action="/users/follow/{{ user.id }}">
               <button class="btn btn-outline-primary">Follow</button>
             </form>
+            {% endif %}
           </div>
         </ul>
       </div>
