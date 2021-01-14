@@ -54,5 +54,5 @@ class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     IMDB_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False, unique=True)
-    poster_url = db.Column(db.Text, nullable=Fasle)
-    description = db.Column()
+    poster_url = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text)
