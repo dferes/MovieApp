@@ -1,18 +1,17 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, User, Follows
+from models import db, User, Follows, MovieList
 from secret_key import key
 from api_key import api_key
 import requests
 import json
 from sqlalchemy.exc import IntegrityError
-from forms import NewUserForm, UserLoginForm, EditUserForm
+from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm
 from user_functions import signup, authenticate
 
+
 #k_jg1h63to
-
-
 CURRENT_USER_KEY = 'current_user'
 # Note that you are limited to 100 API calls per day...
 base_url = f"https://imdb-api.com/en/API/Search/{api_key}"
@@ -59,11 +58,11 @@ def pre_populate_user_edit_form_fields(form, user):
 @app.route('/')
 def homepage():
     if CURRENT_USER_KEY in session:
-        user = User.query.get_or_404(session[CURRENT_USER_KEY])
+        this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     else:
-        user = None
+        this_user = None
         
-    return render_template('homepage.html', user=user)
+    return render_template('homepage.html', this_user=this_user)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -120,17 +119,17 @@ def logout():
 
 @app.route('/get-movie-by-query', methods=['GET'])
 def get_move_by_query():
-    user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     title = request.args.get('q') # just assume the query is a title for now
     res = requests.get(f"http://127.0.0.1:5000/api/get-movie-by-title/{title}") # Only works locally; fix this to accomodate bothe cases 
     res = json.loads(res.text)['results']
     # print(f"----------------------------------\n{res}\n--------------------------------------")
-    return render_template('search/show-query-results.html', res=res, query=title, user=user)
+    return render_template('search/show-query-results.html', res=res, query=title, this_user=this_user)
 
 
 @app.route('/show-movie-details/<string:id>')
 def show_movie_details(id):
-    user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     res = requests.get(f"http://127.0.0.1:5000/api/get-cast-information/{id}") # Only works locally
     res = json.loads(res.text)
     # print('---------------------------------',res, '------------------------------')
@@ -156,53 +155,79 @@ def show_movie_details(id):
         writers=writers,
         actors=actors,
         plot=plot,
-        user=user)
+        this_user=this_user)
 
 
 @app.route('/users/<int:id>')
-def show_users_own_profile(id):
+def show_user_profile(id):
     user = User.query.get_or_404(id)
-    return render_template('user/show_profile_details.html', user=user)
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    return render_template('user/show_profile_details.html', user=user, this_user=this_user)
 
 
 @app.route('/users/<int:id>/my-lists', methods=['GET'])
 def show_user_lists(id):
-    user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    return render_template('user/show_user_lists.html', user=user)
+    user = User.query.get_or_404(id)
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    return render_template('user/show_user_lists.html', user=user, this_user=this_user)
 
 
 @app.route('/users/<int:id>/following', methods=['GET']) # todo
 def show_user_following(id):
-    user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    return render_template('user/following.html', user=user)
+    user = User.query.get_or_404(id)
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    return render_template('user/following.html', user=user, this_user=this_user)
 
 
 @app.route('/users/<int:id>/followers', methods=['GET']) # todo
 def show_user_followers(id):
-    user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    return render_template('user/followers.html', user=user)
+    user = User.query.get_or_404(id)
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    return render_template('user/followers.html', user=user, this_user=this_user)
+
+
+@app.route('/users/new-list', methods=['GET', 'POST']) # todo
+def make_new_movie_list():
+    form = NewListForm()
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    
+    if form.validate_on_submit():
+        try:
+            new_list = MovieList(
+                owner=this_user.id,
+                title=form.title.data,
+                description=form.description.data
+            )
+            
+            db.session.add(new_list)
+            db.session.commit()
+        
+        except IntegrityError:
+            flash('Generic Error Message For Now', 'danger')
+        
+    return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form)
 
 
 @app.route('/users/<int:id>/edit-profile', methods=['GET', 'POST']) # POST or PATCH, some of the info is new, some is being replaced..
 def edit_user_profile(id):
     form = EditUserForm()
-    user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     
     if form.validate_on_submit():
-        update_user_data(form, user) 
+        update_user_data(form, this_user) 
         
-        if authenticate(user.username, form.password.data):        
-            db.session.add(user)
+        if authenticate(this_user.username, form.password.data):        
+            db.session.add(this_user)
             db.session.commit()
             flash('Your account has been updated.', 'success')
         else:
             flash('Incorrect password.', 'danger')
         
-        return redirect(f"/users/{user.id}")
+        return redirect(f"/users/{this_user.id}")
     
-    pre_populate_user_edit_form_fields(form, user)
+    pre_populate_user_edit_form_fields(form, this_user)
     
-    return render_template('user/edit_profile.html', user=user, form=form)
+    return render_template('user/edit_profile.html', this_user=this_user, form=form)
 
 
 @app.route('/users/delete', methods=['GET', 'DELETE'])
