@@ -20,7 +20,7 @@
                   <p>@{{ follower.username }}</p>
                 </a>
 
-                {% if is_following(g.user, follower) %}
+                {% if is_following(this_user, follower) %}
                   <form method="POST"
                         action="/users/stop-following/{{ follower.id }}">
                     <button class="btn btn-primary btn-sm">Unfollow</button>

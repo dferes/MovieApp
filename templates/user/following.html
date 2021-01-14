@@ -17,7 +17,7 @@
                   <img src="{{ followed_user.image_url }}" alt="Image for {{ followed_user.username }}" class="card-image">
                   <p>@{{ followed_user.username }}</p>
                 </a>
-                {% if is_following(g.user, followed_user) %}
+                {% if is_following(this_user, followed_user) %}
                   <form method="POST"
                         action="/users/stop-following/{{ followed_user.id }}">
                     <button class="btn btn-primary btn-sm">Unfollow</button>
