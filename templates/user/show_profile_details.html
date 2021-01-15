@@ -10,7 +10,11 @@
       <div class="col-9">
         <ul class="user-stats nav nav-pills">
           <li class="stat">
-            <p class="small">My Lists</p>
+            {% set list_link_name = 'My Lists' %}
+            {% if this_user.id != user.id %}
+              {% set list_link_name = 'Lists' %}
+            {% endif %}
+            <p class="small">{{list_link_name}}</p>
             <h4>
               <a href="/users/{{ user.id }}/my-lists">{{ user.lists | length }}</a>
             </h4>
@@ -34,12 +38,15 @@
               <button class="btn btn-outline-danger ml-2">Delete Profile</button>
             </form>
           {% else %}
+            {% if user in this_user.following %}
             <form method="POST" action="/users/stop-following/{{ user.id }}">
               <button class="btn btn-primary">Unfollow</button>
             </form>
+            {% else %}
             <form method="POST" action="/users/follow/{{ user.id }}">
               <button class="btn btn-outline-primary">Follow</button>
             </form>
+            {% endif %}
           {% endif %}
           </div>
         </ul>
