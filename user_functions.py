@@ -27,3 +27,17 @@ def authenticate(username, password):
             return user
 
     return False
+
+
+def is_followed_by(user_, other_user):
+    """Is this user followed by `other_user`?"""
+
+    found_user_list = [user for user in user_.followers if user == other_user]
+    return len(found_user_list) == 1
+
+
+def is_following(user_, other_user):
+    """Is this user following `other_use`?"""
+
+    found_user_list = [user for user in user_.following if user == other_user]
+    return len(found_user_list) == 1
