@@ -35,16 +35,20 @@ class User(db.Model):
         primaryjoin=(Follows.following_id == id),
         secondaryjoin=(Follows.followed_by_id == id)
     )
+    
+    lists = db.relationship('MovieList', backref='owning_user') # one to many, on deletion of the owner, all children will (?) also be deleted
 
 
 class MovieList(db.Model):
     __tablename__ = 'movie_lists'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    owner = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
+    owner = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade')) # double check the use of cascade here
     title = db.Column(db.Text, nullable=False, unique=True)
     description = db.Column(db.Text)
     list_image_url = db.Column(db.Text)
+    
+    movies = db.relationship('Movie', backref='list') # one to many.
     
     
 class Movie(db.Model):
@@ -52,7 +56,8 @@ class Movie(db.Model):
     __tablename__ = 'movies'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    IMDB_id = db.Column(db.Integer, primary_key=True)
+    IMDB_id = db.Column(db.Integer, primary_key=True) # does need to be unique but not neccessarily a primary key
+    list_id = db.Column(db.Integer, db.ForeignKey('movie_lists.id', ondelete='cascade'), nullable=False) # double check the use of cascade here
     name = db.Column(db.Text, nullable=False, unique=True)
     poster_url = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
