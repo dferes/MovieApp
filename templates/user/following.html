@@ -1,6 +1,5 @@
 {% extends 'user/show_profile_details.html' %}
 {% block user_details %}
-<h1> USER FOLLOWING (TODO)</h1>
   <div class="col-sm-9">
     <div class="row">
 
@@ -14,7 +13,7 @@
               </div>
               <div class="card-contents">
                 <a href="/users/{{ followed_user.id }}" class="card-link">
-                  <img src="{{ followed_user.image_url }}" alt="Image for {{ followed_user.username }}" class="card-image">
+                  <img src="{{ followed_user.user_pic_url }}" alt="Image for {{ followed_user.username }}" class="card-image">
                   <p>@{{ followed_user.username }}</p>
                 </a>
                 {% if is_following(this_user, followed_user) %}
