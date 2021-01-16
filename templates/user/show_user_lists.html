@@ -1,10 +1,27 @@
 {% extends 'user/show_profile_details.html' %}
-{% block title %}{{user.username}}'s Movie Lists{% endblock %}
+{% block title %}{{user.username}}'s Lists{% endblock %}
 {% block user_details %}
-<div class="col-sm-6">
-    <h1 class="text-center">Movie List Stuff (TODO)</h1>
-    <ul class="list-group" id="lists">
-    </ul>
+<div class="jumbotron">
+    {% for movie_list in user.lists %}
+    <div class="row">
+        <div class="col-md-9">
+            <a href="/users/{{user.id}}/lists/{{movie_list.id}}/details">
+                <div class="card flex-row flex-wrap" style="height: 10rem; width: 75vw;">
+                    <div class="card-header border-0">
+                        <img src="{{movie_list.list_image_url}}" alt="" style="height: 8.5rem;">
+                    </div>
+                    <div class="card-block px-2">
+                        <br>
+                        <h5 class="card-title">{{movie_list.title}} ()</h5>
+                        <div class="container">
+                            <p class="card-text">{{movie_list.description}}</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div> 
+    </div>
+    <br>
+    {% endfor %}
 </div>
-
 {% endblock %}
