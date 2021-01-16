@@ -165,10 +165,11 @@ def show_user_profile(id):
     return render_template('user/show_profile_details.html', user=user, this_user=this_user)
 
 
-@app.route('/users/<int:id>/my-lists', methods=['GET'])
+@app.route('/users/<int:id>/show-lists', methods=['GET'])
 def show_user_lists(id):
     user = User.query.get_or_404(id)
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    
     return render_template('user/show_user_lists.html', user=user, this_user=this_user)
 
 
@@ -206,7 +207,7 @@ def make_new_movie_list():
         except IntegrityError:
             flash('Generic Error Message For Now (come back)', 'danger')
         
-        return redirect(f"/users/{this_user.id}/my-lists")
+        return redirect(f"/users/{this_user.id}/show-lists")
         
     return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form)
 
