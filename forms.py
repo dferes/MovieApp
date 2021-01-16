@@ -22,7 +22,7 @@ class EditUserForm(FlaskForm):
     username = StringField('Username')
     email = StringField('E-mail', validators=[Optional(), Email()])
     user_pic_url = StringField('Image URL', validators=[URL(), Optional()])
-    bio = TextAreaField('Bio', validators=[Optional()])
+    bio = TextAreaField('Bio', validators=[Optional(), Length(max=120)])
     header_image_url = StringField('Header Image', validators=[URL(), Optional()])
     password = PasswordField('Password', validators=[Length(min=7), DataRequired()])
     
@@ -30,5 +30,5 @@ class EditUserForm(FlaskForm):
 class NewListForm(FlaskForm):
     
     title = StringField('List Name', validators=[DataRequired()])
-    description = TextAreaField('Description', validators=[Optional()])
+    description = TextAreaField('Description', validators=[Optional(), Length(max=120)])
     list_image_url = StringField('List Image', validators=[Optional(), URL()])
