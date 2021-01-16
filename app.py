@@ -29,7 +29,7 @@ toolbar = DebugToolbarExtension(app)
 
 db.app = app
 db.init_app(app)
-
+        
 
 def do_login(user):
     session[CURRENT_USER_KEY] = user.id
@@ -264,6 +264,14 @@ def unfollow(followed_user_id):
     db.session.commit()
     
     return redirect(f"/users/{this_user.id}/following")
+
+
+@app.route('/users/<int:user_id>/lists/<int:list_id>/details')
+def show_user_list_details(user_id, list_id):
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    user = User.query.get_or_404(user_id)
+    movie_list = MovieList.query.get_or_404(list_id)
+    return render_template('lists/show_user_list.html', user=user,this_user=this_user,movie_list=movie_list)
     
 #-------------------------------------------------------------------------
 #                         External API calls
