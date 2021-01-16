@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}{{movie_list.title}} Details{% endblock %}
+{% block content %}
+<br>
+<div class="container">
+   <div class="jumbotron">
+      <div class="card flex-row flex-wrap" style="height: fluid;">
+         <div class="card-header border-0">
+
+         </div>
+         <div class="card-block px-2">
+            <br>
+            <h5>{{movie_list.title}} <small>@{{user.username}}</small></h5>
+            <p class="card-text">{{movie_list.description}}</p>
+         </div>
+      </div>
+   </div>
+</div>
+<hr>
+<div class="container">
+   <div class="jumbotron">
+      {% for movie in movie_list.movies %}
+      <div class="card flex-row flex-wrap" style="height: 14rem;">
+         <div class="card-header border-0">
+             <img src="{{movie.poster_url}}" alt="" style="height: 12.5rem;">
+         </div>
+         <div class="card-block px-2">
+            <br>
+            <h5 class="card-title">{{movie.name}}</h5>
+            <p class="card-text">Description goes here...</p>
+         </div>
+         <!-- <div class="w-100"></div> -->
+      </div>
+      <hr>
+      {% endfor %}
+   </div>
+</div>
+
+
+{% endblock %}
+
