@@ -3,15 +3,30 @@
 {% block content %}
 <br>
 <div class="container">
-   <div class="jumbotron">
-      <div class="card flex-row flex-wrap" style="height: fluid;">
+   <div class="jumbotron-fluid">
+      <div class="card flex-row flex-wrap" style="height: 20vw;">
          <div class="card-header border-0">
-
+            <img src="{{movie_list.list_image_url}}" alt="" style="height: 18vw; max-width: 30vw;">
          </div>
          <div class="card-block px-2">
             <br>
-            <h5>{{movie_list.title}} <small>@{{user.username}}</small></h5>
-            <p class="card-text">{{movie_list.description}}</p>
+            <span> 
+               <h5>{{movie_list.title}} 
+                  <small>@{{user.username}}</small>
+               </h5> 
+            </span>
+            {% if this_user.id == user.id %}
+            <span>
+               <a href="/users/{{ this_user.id }}/list/{{movie_list.id}}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+            </span>
+            <span>
+                <a href="/users/delete/{{movie_list.id}}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </span>
+            {% endif%}
+            <hr>
+            <div class="container">
+               <p class="card-text" style="width: 42vw;">{{movie_list.description}}</p>
+            </div>
          </div>
       </div>
    </div>
@@ -22,14 +37,17 @@
       {% for movie in movie_list.movies %}
       <div class="card flex-row flex-wrap" style="height: 14rem;">
          <div class="card-header border-0">
-             <img src="{{movie.poster_url}}" alt="" style="height: 12.5rem;">
+            <a href="/show-movie-details/{{movie.IMDB_id}}">
+               <img src="{{movie.poster_url}}" alt="" style="height: 12.5rem;">
+            </a>
          </div>
          <div class="card-block px-2">
             <br>
-            <h5 class="card-title">{{movie.name}}</h5>
-            <p class="card-text">Description goes here...</p>
+            <a href="/show-movie-details/{{movie.IMDB_id}}">
+               <h5 class="card-title">{{movie.name}}</h5>
+            </a>
+            <p class="card-text">Some Details here...</p>
          </div>
-         <!-- <div class="w-100"></div> -->
       </div>
       <hr>
       {% endfor %}
