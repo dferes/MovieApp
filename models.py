@@ -71,5 +71,5 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), nullable=False)        
     list_id = db.Column(db.Integer, db.ForeignKey('movie_lists.id', ondelete='cascade'), nullable=False)
-    content = db.Column(db.Text, nullabe=False)
+    content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
