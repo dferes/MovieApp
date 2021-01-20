@@ -5,20 +5,33 @@
     {% for movie_list in user.lists %}
     <div class="row">
         <div class="col-md-9">
-            <a href="/users/{{user.id}}/lists/{{movie_list.id}}/details">
-                <div class="card flex-row flex-wrap" style="height: 10rem; width: 75vw;">
+            <div class="card flex-row flex-wrap" style="height: 10rem; width: 75vw;">
+                <a href="/users/{{user.id}}/lists/{{movie_list.id}}/details">
                     <div class="card-header border-0">
-                        <img src="{{movie_list.list_image_url}}" alt="" style="height: 8.5rem;">
+                        <img src="{{movie_list.list_image_url}}" alt="" style="height: 8.5rem; max-width:20vw;">
                     </div>
-                    <div class="card-block px-2">
-                        <br>
+                </a>
+                <div class="card-block px-2">
+                    <br>
+                    <a href="/users/{{user.id}}/lists/{{movie_list.id}}/details">
                         <h5 class="card-title">{{movie_list.title}} ({{movie_list.movies | length}})</h5>
-                        <div class="container">
-                            <p class="card-text">{{movie_list.description}}</p>
-                        </div>
+                    </a>
+                    <div class="container">
+                        <!-- put this in style sheet -->
+                        <p class="card-text" style="max-width: 55vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{movie_list.description}}</p>
                     </div>
+                    <hr>
+                    {% if this_user.id == user.id %}
+                    <span>
+                        <a href="/users/{{ this_user.id }}/list/{{movie_list.id}}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                    </span>
+                    <span>
+                        <a href="/users/delete/{{movie_list.id}}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </span>
+                    {% endif%}
+                    <span class="comments-number"> Comments</span>
                 </div>
-            </a>
+            </div>
         </div> 
     </div>
     <br>
