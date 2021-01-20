@@ -4,15 +4,20 @@
 <br>
 <div class="container">
    <div class="jumbotron">
-      <div class="card flex-row flex-wrap" style="height: fluid;">
+      <div class="card flex-row flex-wrap" style="height: 54vw;">
          <div class="card-header border-0">
-
+             <img src="{{poster}}" alt="" style="height: 50vw;">
          </div>
          <div class="card-block px-2">
             <br>
-            <h5>Plot</h5>
-            <p class="card-text">{{plot['plainText']}}</p>
+            <h5 class="card-title">{{title}}</h5>
+            <p class="card-text">Ratings and add buttons go here.</p>
          </div>
+      </div>
+      <hr>
+      <h4><b>Plot</b></h4>
+      <div class="container">
+         <p>{{plot['plainText']}}</p>
       </div>
    </div>
 </div>
