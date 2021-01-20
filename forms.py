@@ -32,3 +32,8 @@ class NewListForm(FlaskForm):
     title = StringField('List Name', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[Optional(), Length(max=120)])
     list_image_url = StringField('List Image', validators=[Optional(), URL()])
+
+
+class UserCommentForm(FlaskForm):
+    
+    comment_body = TextAreaField('...', validators=[DataRequired(), Length(max=120)])
