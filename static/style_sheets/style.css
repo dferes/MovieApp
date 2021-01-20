@@ -362,5 +362,9 @@ p.card-bio {
 }
 
 .comments-number {
-    padding-left: 14em;
+    padding-left: 9em;
+}
+
+.list-card-button-area {
+    margin-top: -0.3em;
 }
