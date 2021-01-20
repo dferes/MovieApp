@@ -17,19 +17,23 @@
                         <h5 class="card-title">{{movie_list.title}} ({{movie_list.movies | length}})</h5>
                     </a>
                     <div class="container">
-                        <!-- put this in style sheet -->
+                        <!-- 'put this in style sheet' -->
                         <p class="card-text" style="max-width: 55vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{movie_list.description}}</p>
                     </div>
                     <hr>
-                    {% if this_user.id == user.id %}
-                    <span>
-                        <a href="/users/{{ this_user.id }}/list/{{movie_list.id}}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                    </span>
-                    <span>
-                        <a href="/users/delete/{{movie_list.id}}" class="btn btn-sm btn-outline-danger">Delete</a>
-                    </span>
-                    {% endif%}
-                    <span class="comments-number"> Comments</span>
+                    <div class="row movie-list-card">
+                        {% if this_user.id == user.id %}
+                        <div class="col list-card-button-area">
+                            <form method="DELETE" action="/users/delete/{{movie_list.id}}" class="form-inline">
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>&nbsp; &nbsp;
+                                <a href="/users/{{ this_user.id }}/list/{{movie_list.id}}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                            </form>
+                        </div>
+                        {% endif%}
+                        <div class="col">
+                            <small class="comments-number"> Comments </small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div> 
