@@ -360,3 +360,7 @@ nav + .container {
 p.card-bio {
     margin: 2em 10px 0;
 }
+
+.comments-number {
+    padding-left: 14em;
+}
