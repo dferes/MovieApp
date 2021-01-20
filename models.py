@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -36,19 +37,19 @@ class User(db.Model):
         secondaryjoin=(Follows.followed_by_id == id)
     )
     
-    lists = db.relationship('MovieList', backref='owning_user') # one to many, on deletion of the owner, all children will (?) also be deleted
+    lists = db.relationship('MovieList', backref='owning_user')
 
 
 class MovieList(db.Model):
     __tablename__ = 'movie_lists'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    owner = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade')) # double check the use of cascade here
+    owner = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
     title = db.Column(db.Text, nullable=False, unique=True)
     description = db.Column(db.Text)
     list_image_url = db.Column(db.Text)
     
-    movies = db.relationship('Movie', backref='list') # one to many.
+    movies = db.relationship('Movie', backref='parent_list')
     
     
 class Movie(db.Model):
@@ -56,8 +57,18 @@ class Movie(db.Model):
     __tablename__ = 'movies'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    IMDB_id = db.Column(db.Integer, primary_key=True) # does need to be unique but not neccessarily a primary key
+    IMDB_id = db.Column(db.Integer, primary_key=True)
     list_id = db.Column(db.Integer, db.ForeignKey('movie_lists.id', ondelete='cascade'), nullable=False) # double check the use of cascade here
     name = db.Column(db.Text, nullable=False, unique=True)
     poster_url = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
+    
+    
+class Comments(db.Model):
+    __tablename__ = 'comments'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), nullable=False)        
+    list_id = db.Column(db.Integer, db.ForeignKey('movie_lists.id', ondelete='cascade'), nullable=False)
+    content = db.Column(db.Text, nullabe=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
