@@ -17,6 +17,9 @@ CURRENT_USER_KEY = 'current_user'
 base_url = f"https://imdb-api.com/en/API/Search/{api_key}"
 cast_url = f"https://imdb-api.com/en/API/FullCast/{api_key}"
 wikipedia_url = f"https://imdb-api.com/en/API/Wikipedia/{api_key}"
+poster_url = f"https://imdb-api.com/en/API/Posters/{api_key}"
+
+URL_DICTIONARY = {'base': base_url, 'cast': cast_url, 'wiki' : wikipedia_url, 'poster': poster_url}
 
 app = Flask(__name__)
 
@@ -121,40 +124,31 @@ def logout():
 def get_move_by_query():
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     title = request.args.get('q') # just assume the query is a title for now
-    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-by-title/{title}") # Only works locally; fix this to accomodate bothe cases 
+    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/base/{title}") # Only works locally; fix this to accomodate bothe cases 
     res = json.loads(res.text)['results']
-    # print(f"----------------------------------\n{res}\n--------------------------------------")
+
     return render_template('search/show-query-results.html', res=res, query=title, this_user=this_user)
 
 
 @app.route('/show-movie-details/<string:id>')
 def show_movie_details(id):
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    res = requests.get(f"http://127.0.0.1:5000/api/get-cast-information/{id}") # Only works locally
-    res = json.loads(res.text)
-    # print('---------------------------------',res, '------------------------------')
-    # for key, val in res.items():
-    #     print(f"    {key}: {val}")
-    #     print("\n")
-    full_title = res['fullTitle']
-    directors = res['directors']
-    writers = res['writers']
-    actors = res['actors'][:10] # limit relavent actors to top 10 for now
-    # print('ACTORS:\n\n', actors, '\n')
-    # print('DIRECTORS:\n\n', directors, '\n')
-    # print('WRITERS:\n\n', writers, '\n')
-    wiki_response = requests.get(f"http://127.0.0.1:5000/api/get-wikipedia-information/{id}") # only works locally
-    wiki_response = json.loads(wiki_response.text)
-    # for key in wiki_response.keys():
-    #     print(f"{key}\n\n")
-
-    plot = wiki_response['plotShort']
     
-    return render_template('show-movie-details.html', title=full_title, 
-        directors=directors, 
-        writers=writers,
-        actors=actors,
-        plot=plot,
+    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/cast/{id}") # Only works locally
+    res = json.loads(res.text)
+
+    wiki_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/wiki/{id}") # only works locally
+    wiki_response = json.loads(wiki_response.text)
+    
+    poster_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/poster/{id}")
+    poster_response = json.loads(poster_response.text)
+    
+    return render_template('show-movie-details.html', title=res['fullTitle'], 
+        directors=res['directors'], 
+        writers=res['writers'],
+        actors=res['actors'][:10],
+        plot=wiki_response['plotShort'],
+        poster=poster_response['posters'][0]['link'],
         this_user=this_user)
 
 
@@ -212,7 +206,7 @@ def make_new_movie_list():
     return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form)
 
 
-@app.route('/users/<int:id>/edit-profile', methods=['GET', 'POST']) # POST or PATCH, some of the info is new, some is being replaced..
+@app.route('/users/<int:id>/edit-profile', methods=['GET', 'POST'])
 def edit_user_profile(id):
     form = EditUserForm()
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
@@ -276,21 +270,7 @@ def show_user_list_details(user_id, list_id):
 #-------------------------------------------------------------------------
 #                         External API calls
 
-# Refactor these into one function
-
-@app.route('/api/get-movie-by-title/<string:title>', methods=['GET'])
-def get_movie_my_title(title):
-    res = requests.get(f"{base_url}/{title}").text
-    return jsonify(json.loads(res))
-
-
-@app.route('/api/get-cast-information/<string:id>', methods=['GET'])
-def get_full_cast_information(id):
-    res = requests.get(f"{cast_url}/{id}").text
-    return jsonify(json.loads(res))
-
-
-@app.route('/api/get-wikipedia-information/<string:id>', methods=['GET'])
-def get_wikipedia_information(id):
-    res = requests.get(f"{wikipedia_url}/{id}").text
+@app.route('/api/get-movie-details/<string:type>/<string:query>', methods=['GET'])
+def get_movie_details(query, type):
+    res = requests.get(f"{URL_DICTIONARY[type]}/{query}").text
     return jsonify(json.loads(res))
