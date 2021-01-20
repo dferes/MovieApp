@@ -1,13 +1,13 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, User, Follows, MovieList
+from models import db, User, Follows, MovieList, Movie, Comment
 from secret_key import key
 from api_key import api_key
 import requests
 import json
 from sqlalchemy.exc import IntegrityError
-from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm
+from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, NewUserCommentForm
 from user_functions import signup, authenticate, is_following, is_followed_by
 
 
@@ -267,6 +267,16 @@ def show_user_list_details(user_id, list_id):
     movie_list = MovieList.query.get_or_404(list_id)
     return render_template('lists/show_user_list.html', user=user,this_user=this_user,movie_list=movie_list)
     
+    
+@app.route('/users/delete/<int:movie_list_id>', methods=['DELETE'])
+def delete_movie_list(movie_list_id):
+    movie_list = MovieList.query.get_or_404(movie_list_id)
+    user_id = movie_list.owner
+    
+    db.session.delete(movie_list)
+    db.session.commit()
+    
+    return redirect(f"users/{user_id}")
 #-------------------------------------------------------------------------
 #                         External API calls
 
