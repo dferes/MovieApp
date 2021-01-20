@@ -50,6 +50,7 @@ class MovieList(db.Model):
     list_image_url = db.Column(db.Text)
     
     movies = db.relationship('Movie', backref='parent_list')
+    comments = db.relationship('Comment', backref='movie_list')
     
     
 class Movie(db.Model):
@@ -64,7 +65,7 @@ class Movie(db.Model):
     description = db.Column(db.Text)
     
     
-class Comments(db.Model):
+class Comment(db.Model):
     __tablename__ = 'comments'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
