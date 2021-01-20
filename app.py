@@ -268,7 +268,7 @@ def show_user_list_details(user_id, list_id):
     return render_template('lists/show_user_list.html', user=user,this_user=this_user,movie_list=movie_list)
     
     
-@app.route('/users/delete/<int:movie_list_id>', methods=['DELETE'])
+@app.route('/users/delete/<int:movie_list_id>', methods=['GET', 'DELETE'])
 def delete_movie_list(movie_list_id):
     movie_list = MovieList.query.get_or_404(movie_list_id)
     user_id = movie_list.owner
