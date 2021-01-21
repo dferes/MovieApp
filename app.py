@@ -9,18 +9,8 @@ import json
 from sqlalchemy.exc import IntegrityError
 from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, NewUserCommentForm, EditListForm
 from user_functions import signup, authenticate, is_following, is_followed_by
+from utility_functions import retrieve_movie_details, URL_DICTIONARY, prepopulate_edit_list_form, update_movie_list_data
 
-
-#k_jg1h63to
-CURRENT_USER_KEY = 'current_user'
-# Note that you are limited to 100 API calls per day...
-base_url = f"https://imdb-api.com/en/API/Search/{api_key}"
-cast_url = f"https://imdb-api.com/en/API/FullCast/{api_key}"
-wikipedia_url = f"https://imdb-api.com/en/API/Wikipedia/{api_key}"
-poster_url = f"https://imdb-api.com/en/API/Posters/{api_key}"
-ratings_url = f"https://imdb-api.com/en/API/Ratings/{api_key}"
-
-URL_DICTIONARY = {'base': base_url, 'cast': cast_url, 'wiki' : wikipedia_url, 'poster': poster_url, 'ratings': ratings_url}
 
 app = Flask(__name__)
 
@@ -33,6 +23,8 @@ toolbar = DebugToolbarExtension(app)
 
 db.app = app
 db.init_app(app)
+
+CURRENT_USER_KEY = 'current_user'
         
 
 def do_login(user):
@@ -42,22 +34,7 @@ def do_login(user):
 def do_logout():
     if CURRENT_USER_KEY in session:
         del session[CURRENT_USER_KEY]
-        
 
-def update_user_data(form, user):
-    user.bio = form.bio.data if form.bio.data else user.bio
-    user.header_image_url = form.header_image_url.data if form.header_image_url.data else user.header_image_url
-    user.username = form.username.data if form.username.data else user.username
-    user.email = form.email.data if form.email.data else user.email
-    user.user_pic_url = form.user_pic_url.data if form.user_pic_url.data else user.user_pic_url
-    
-
-def pre_populate_user_edit_form_fields(form, user):
-    form.username.data = user.username
-    form.email.data = user.email
-    form.user_pic_url.data = user.user_pic_url if user.user_pic_url != user.user_pic_url[0:7] != '/static' else None 
-    form.bio.data = user.bio if user.bio else None
-        
 
 @app.route('/')
 def homepage():
@@ -131,30 +108,6 @@ def get_move_by_query():
     return render_template('search/show-query-results.html', res=res, query=title, this_user=this_user)
 
 
-def retrieve_movie_details(imDb_id):
-    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/cast/{imDb_id}") # Only works locally
-    res = json.loads(res.text)
-
-    wiki_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/wiki/{imDb_id}") # only works locally
-    wiki_response = json.loads(wiki_response.text)
-    
-    poster_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/poster/{imDb_id}")
-    poster_response = json.loads(poster_response.text)
-    
-    ratings_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/ratings/{imDb_id}") 
-    ratings_response = json.loads(ratings_response.text)
-    
-    return {'imDb_id': imDb_id,
-            'title': res['fullTitle'],         
-            'directors':res['directors'], 
-            'writers':res['writers'],
-            'actors':res['actors'][:10],
-            'plot':wiki_response['plotShort'],
-            'poster':poster_response['posters'][0]['link'],
-            'ratings':collect_ratings(ratings_response)
-            }
-
-
 @app.route('/show-movie-details/<string:imDb_id>')
 def show_movie_details(imDb_id):
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
@@ -170,14 +123,6 @@ def show_movie_details(imDb_id):
                            poster=movie_details['poster'],
                            ratings =movie_details['ratings'],
                            this_user=this_user)
-
-
-def collect_ratings(ratings_response):
-    ratings_dict = {}
-    for key,val in ratings_response.items():
-        if key not in ['imDbId', 'title', 'fullTitle', 'type', 'year', 'errorMessage']:
-            ratings_dict[key] = val
-    return ratings_dict
 
 
 @app.route('/users/<int:id>')
@@ -234,7 +179,16 @@ def make_new_movie_list():
     return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form, new=True)
 
 
-@app.route('/users/<int:id>/edit-profile', methods=['GET', 'POST'])
+@app.route('/users/<int:id>/edit-profile', methods=['GET'])
+def get_edit_profile_form(id):
+    form = EditUserForm()
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    pre_populate_user_edit_form_fields(form, this_user)
+    
+    return render_template('user/edit_profile.html', this_user=this_user, form=form)
+    
+
+@app.route('/users/<int:id>/edit-profile', methods=['POST'])
 def edit_user_profile(id):
     form = EditUserForm()
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
@@ -249,12 +203,8 @@ def edit_user_profile(id):
         else:
             flash('Incorrect password.', 'danger')
         
-        return redirect(f"/users/{this_user.id}")
+    return redirect(f"/users/{this_user.id}")
     
-    pre_populate_user_edit_form_fields(form, this_user)
-    
-    return render_template('user/edit_profile.html', this_user=this_user, form=form)
-
 
 @app.route('/users/delete', methods=['GET', 'DELETE'])
 def delete_user():
@@ -312,18 +262,14 @@ def edit_user_list(list_id):
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     movie_list = MovieList.query.get_or_404(list_id)
     form = EditListForm()
+    
     if form.validate_on_submit():
-        movie_list.title = form.title.data if form.title.data else movie_list.title
-        movie_list.description = form.description.data if form.description.data else movie_list.description
-        movie_list.list_image_url = form.list_image_url.data if form.list_image_url.data else movie_list.list_image_url
-        
+        prepopulate_edit_list_form(movie_list, form)
         db.session.add(movie_list)
         db.session.commit()
         return redirect(f"/users/{this_user.id}/show-lists")
         
-    form.title.data = movie_list.title
-    form.description.data = movie_list.description
-    form.list_image_url = movie_list.list_image_url
+    update_movie_list_data(form, movie_list)
 
     return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form, new=False)
 
@@ -342,17 +288,27 @@ def add_movie_to_list(movie_list_id, imDb_id):
         IMDB_id=imDb_id,
         list_id=movie_list_id,
         name=movie_details['title'],
-        poster_url=movie_details['poster']
+        poster_url=movie_details['poster'],
+        plot=movie_details['plot']
     )
     db.session.add(movie_add)
     db.session.commit()
     return
 
 
-#-------------------------------------------------------------------------
-#                         External API calls
+@app.route('/users/lists/movies/<int:movie_id>/remove', methods=['GET', 'DELETE'])
+def remove_movie_from_list(movie_id):
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    movie = Movie.query.get_or_404(movie_id)
+   
+    db.session.delete(movie)
+    db.session.commit()
+    
+    return redirect(f"/users/{this_user.id}/show-lists")
+
 
 @app.route('/api/get-movie-details/<string:type>/<string:query>', methods=['GET'])
 def get_movie_details(query, type):
+    '''External API calls'''
     res = requests.get(f"{URL_DICTIONARY[type]}/{query}").text
     return jsonify(json.loads(res))
