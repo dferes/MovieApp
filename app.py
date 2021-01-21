@@ -7,7 +7,7 @@ from api_key import api_key
 import requests
 import json
 from sqlalchemy.exc import IntegrityError
-from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, NewUserCommentForm
+from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, NewUserCommentForm, EditListForm
 from user_functions import signup, authenticate, is_following, is_followed_by
 
 
@@ -18,8 +18,9 @@ base_url = f"https://imdb-api.com/en/API/Search/{api_key}"
 cast_url = f"https://imdb-api.com/en/API/FullCast/{api_key}"
 wikipedia_url = f"https://imdb-api.com/en/API/Wikipedia/{api_key}"
 poster_url = f"https://imdb-api.com/en/API/Posters/{api_key}"
+ratings_url = f"https://imdb-api.com/en/API/Ratings/{api_key}"
 
-URL_DICTIONARY = {'base': base_url, 'cast': cast_url, 'wiki' : wikipedia_url, 'poster': poster_url}
+URL_DICTIONARY = {'base': base_url, 'cast': cast_url, 'wiki' : wikipedia_url, 'poster': poster_url, 'ratings': ratings_url}
 
 app = Flask(__name__)
 
@@ -130,26 +131,53 @@ def get_move_by_query():
     return render_template('search/show-query-results.html', res=res, query=title, this_user=this_user)
 
 
-@app.route('/show-movie-details/<string:id>')
-def show_movie_details(id):
-    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    
-    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/cast/{id}") # Only works locally
+def retrieve_movie_details(imDb_id):
+    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/cast/{imDb_id}") # Only works locally
     res = json.loads(res.text)
 
-    wiki_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/wiki/{id}") # only works locally
+    wiki_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/wiki/{imDb_id}") # only works locally
     wiki_response = json.loads(wiki_response.text)
     
-    poster_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/poster/{id}")
+    poster_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/poster/{imDb_id}")
     poster_response = json.loads(poster_response.text)
     
-    return render_template('show-movie-details.html', title=res['fullTitle'], 
-        directors=res['directors'], 
-        writers=res['writers'],
-        actors=res['actors'][:10],
-        plot=wiki_response['plotShort'],
-        poster=poster_response['posters'][0]['link'],
-        this_user=this_user)
+    ratings_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/ratings/{imDb_id}") 
+    ratings_response = json.loads(ratings_response.text)
+    
+    return {'imDb_id': imDb_id,
+            'title': res['fullTitle'],         
+            'directors':res['directors'], 
+            'writers':res['writers'],
+            'actors':res['actors'][:10],
+            'plot':wiki_response['plotShort'],
+            'poster':poster_response['posters'][0]['link'],
+            'ratings':collect_ratings(ratings_response)
+            }
+
+
+@app.route('/show-movie-details/<string:imDb_id>')
+def show_movie_details(imDb_id):
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    movie_details = retrieve_movie_details(imDb_id)
+    
+    return render_template('show-movie-details.html',
+                           imDb_id=imDb_id, 
+                           title=movie_details['title'], 
+                           directors=movie_details['directors'], 
+                           writers=movie_details['writers'],
+                           actors=movie_details['actors'],
+                           plot=movie_details['plot'],
+                           poster=movie_details['poster'],
+                           ratings =movie_details['ratings'],
+                           this_user=this_user)
+
+
+def collect_ratings(ratings_response):
+    ratings_dict = {}
+    for key,val in ratings_response.items():
+        if key not in ['imDbId', 'title', 'fullTitle', 'type', 'year', 'errorMessage']:
+            ratings_dict[key] = val
+    return ratings_dict
 
 
 @app.route('/users/<int:id>')
@@ -203,7 +231,7 @@ def make_new_movie_list():
         
         return redirect(f"/users/{this_user.id}/show-lists")
         
-    return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form)
+    return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form, new=True)
 
 
 @app.route('/users/<int:id>/edit-profile', methods=['GET', 'POST'])
@@ -268,7 +296,7 @@ def show_user_list_details(user_id, list_id):
     return render_template('lists/show_user_list.html', user=user,this_user=this_user,movie_list=movie_list)
     
     
-@app.route('/users/delete/<int:movie_list_id>', methods=['GET', 'DELETE'])
+@app.route('/users/lists/<int:movie_list_id>/delete', methods=['GET', 'DELETE'])
 def delete_movie_list(movie_list_id):
     movie_list = MovieList.query.get_or_404(movie_list_id)
     user_id = movie_list.owner
@@ -276,7 +304,51 @@ def delete_movie_list(movie_list_id):
     db.session.delete(movie_list)
     db.session.commit()
     
-    return redirect(f"users/{user_id}")
+    return redirect(f"/users/{user_id}")
+
+
+@app.route('/users/lists/<int:list_id>/edit', methods=['GET', 'POST']) # PUT/PATCH wont work here. Why?
+def edit_user_list(list_id):
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    movie_list = MovieList.query.get_or_404(list_id)
+    form = EditListForm()
+    if form.validate_on_submit():
+        movie_list.title = form.title.data if form.title.data else movie_list.title
+        movie_list.description = form.description.data if form.description.data else movie_list.description
+        movie_list.list_image_url = form.list_image_url.data if form.list_image_url.data else movie_list.list_image_url
+        
+        db.session.add(movie_list)
+        db.session.commit()
+        return redirect(f"/users/{this_user.id}/show-lists")
+        
+    form.title.data = movie_list.title
+    form.description.data = movie_list.description
+    form.list_image_url = movie_list.list_image_url
+
+    return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form, new=False)
+
+
+@app.route('/users/lists/<int:movie_list_id>/add-movie/<string:imDb_id>', methods=['GET'])
+def add_movie_to_list_form(movie_list_id, imDb_id):
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    add_movie_to_list(movie_list_id, imDb_id)
+    
+    return redirect(f"/users/{this_user.id}/lists/{movie_list_id}/details")
+    
+    
+def add_movie_to_list(movie_list_id, imDb_id):
+    movie_details = retrieve_movie_details(imDb_id)
+    movie_add = Movie(
+        IMDB_id=imDb_id,
+        list_id=movie_list_id,
+        name=movie_details['title'],
+        poster_url=movie_details['poster']
+    )
+    db.session.add(movie_add)
+    db.session.commit()
+    return
+
+
 #-------------------------------------------------------------------------
 #                         External API calls
 
