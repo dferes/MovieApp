@@ -29,11 +29,17 @@ class EditUserForm(FlaskForm):
 
 class NewListForm(FlaskForm):
     
-    title = StringField('List Name', validators=[DataRequired()])
+    title = StringField('List Name', validators=[DataRequired(), Length(max=20)])
     description = TextAreaField('Description', validators=[Optional(), Length(max=200)])
-    list_image_url = StringField('List Image', validators=[Optional(), URL()])
+    list_image_url = StringField('List Image', validators=[DataRequired(), URL()])
 
 
 class NewUserCommentForm(FlaskForm):
     
     comment_body = TextAreaField('...', validators=[DataRequired(), Length(max=160)])
+    
+
+class EditListForm(FlaskForm):
+    title = StringField('List Title', validators=[Optional()])
+    description = TextAreaField('Description', validators=[Optional(), Length(max=200)])
+    list_image_url = StringField('List Image', validators=[Optional(), URL()])
