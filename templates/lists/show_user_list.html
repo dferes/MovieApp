@@ -11,7 +11,7 @@
          <div class="card-block px-2">
             <br>
             <div class="row movie-list-card">
-               <h5>{{movie_list.title}} 
+               <h5 class="user-list-movie-title">{{movie_list.title}} 
                   <small>@{{user.username}}</small>
                </h5>
                {% if this_user.id == user.id %}
@@ -40,10 +40,10 @@
 <div class="container">
    <div class="jumbotron">
       {% for movie in movie_list.movies %}
-      <div class="card flex-row flex-wrap" style="height: 14rem;">
+      <div class="card flex-row flex-wrap" style="height: 12rem;">
          <div class="card-header border-0">
             <a href="/show-movie-details/{{movie.IMDB_id}}">
-               <img src="{{movie.poster_url}}" alt="" style="height: 12.5rem;">
+               <img src="{{movie.poster_url}}" alt="" style="height: 10.5rem;">
             </a>
          </div>
          <div class="card-block px-2">
@@ -51,8 +51,19 @@
             <a href="/show-movie-details/{{movie.IMDB_id}}">
                <h5 class="card-title">{{movie.name}}</h5>
             </a>
-            <p class="card-text">Some Details here...</p>
+            <br>
+            <p class="card-text list-card-movie-plot">
+               {{movie.plot}}
+            </p>
+            <hr>
          </div>
+         {% if this_user.id == user.id %}
+         <div class="movie-remove-button-div">
+            <form action="/users/lists/movies/{{movie.id}}/remove">
+               <button class="btn btn-md btn-outline-danger">Remove</button>
+            </form>
+         </div>
+         {% endif %}
       </div>
       <hr>
       {% endfor %}
