@@ -8,14 +8,40 @@
          <div class="card-header border-0">
              <img src="{{poster}}" alt="" style="height: 50vw;">
          </div>
-         <div class="card-block px-2">
+         <div class="card-block px-2" style="width: 36vw;">
             <br>
-            <h5 class="card-title">{{title}}</h5>
-            <p class="card-text">Ratings and add buttons go here.</p>
+            <h4 class="card-title text-center"><b>{{title}}</b></h4>
+            <hr>
+            <div class="card-text ratings-text" style="width: 22vw;">
+               {% for reviewer,rating in ratings.items() %}
+               <div class="row">
+                  <h5 class="movie-ratings">{{reviewer}}: <b class="rating-value">{{rating}}</b></h5>
+               </div>
+               <br>
+               {% endfor %}
+            </div>
+         </div>
+         <div class="add-to-list-form-div">
+            <form action="">
+
+               <div class="btn-group">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" 
+                     id="dropdown" aria-haspopup="true" aria-expanded="false">Add To List
+                  </button>
+                  <div class="dropdown-menu">
+                     {% for movie_list in this_user.lists %}
+                     <a class="dropdown-item" href="/users/lists/{{movie_list.id}}/add-movie/{{imDb_id}}">
+                        {{movie_list.title}}
+                     </a>
+                     {% endfor %}
+                  </div>
+               </div>
+
+            </form>
          </div>
       </div>
       <hr>
-      <h4><b>Plot</b></h4>
+      <h5 class="text-center"><b>Plot</b></h5>
       <div class="container">
          <p>{{plot['plainText']}}</p>
       </div>
@@ -26,9 +52,9 @@
    <div class="jumbotron">
       <h1 class="display-5">Cast</h1>
       {% for actor in actors %}
-      <div class="card flex-row flex-wrap" style="height: 14rem;">
+      <div class="card flex-row flex-wrap" style="height: 12rem;">
          <div class="card-header border-0">
-             <img src="{{actor['image']}}" alt="" style="height: 12.5rem;">
+             <img src="{{actor['image']}}" alt="" style="height: 10.5rem;">
          </div>
          <div class="card-block px-2">
             <br>
