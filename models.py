@@ -45,7 +45,7 @@ class MovieList(db.Model):
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     owner = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
-    title = db.Column(db.Text, nullable=False, unique=True)
+    title = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
     list_image_url = db.Column(db.Text)
     
@@ -58,11 +58,11 @@ class Movie(db.Model):
     __tablename__ = 'movies'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    IMDB_id = db.Column(db.Integer, primary_key=True)
+    IMDB_id = db.Column(db.Text, primary_key=True)
     list_id = db.Column(db.Integer, db.ForeignKey('movie_lists.id', ondelete='cascade'), nullable=False) # double check the use of cascade here
     name = db.Column(db.Text, nullable=False, unique=True)
     poster_url = db.Column(db.Text, nullable=False)
-    description = db.Column(db.Text)
+    # description = db.Column(db.Text)
     
     
 class Comment(db.Model):
