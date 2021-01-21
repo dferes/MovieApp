@@ -10,19 +10,24 @@
          </div>
          <div class="card-block px-2">
             <br>
-            <span> 
+            <div class="row movie-list-card">
                <h5>{{movie_list.title}} 
                   <small>@{{user.username}}</small>
-               </h5> 
-            </span>
-            {% if this_user.id == user.id %}
-            <span>
-               <a href="/users/{{ this_user.id }}/list/{{movie_list.id}}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-            </span>
-            <span>
-                <a href="/users/delete/{{movie_list.id}}" class="btn btn-sm btn-outline-danger">Delete</a>
-            </span>
-            {% endif%}
+               </h5>
+               {% if this_user.id == user.id %}
+               <div class="col list-card-button-area">
+                  <div class="row list-card-button-container">
+                     <!-- # PUT/PATCH wont work here. Why? -->
+                     <form method="POST" action="/users/lists/{{movie_list.id}}/edit" class="form-inline"> 
+                        <button class="btn btn-md btn-outline-primary">Edit</button>&nbsp; &nbsp;
+                     </form>
+                     <form method="DELETE" action="/users/lists/{{movie_list.id}}/delete" class="form-inline">
+                        <button class="btn btn-md btn-outline-danger">Delete</button>&nbsp; &nbsp;
+                     </form>
+                  </div>
+               </div>
+               {% endif%}
+           </div>
             <hr>
             <div class="container">
                <p class="card-text" style="width: 42vw;">{{movie_list.description}}</p>
