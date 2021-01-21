@@ -9,8 +9,8 @@ import json
 from sqlalchemy.exc import IntegrityError
 from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, NewUserCommentForm, EditListForm
 from user_functions import signup, authenticate, is_following, is_followed_by
-from utility_functions import retrieve_movie_details, URL_DICTIONARY, prepopulate_edit_list_form, update_movie_list_data
-from utility_functions import add_movie_to_list, validate_and_signup, validate_and_create_movie_list
+from utility_functions import retrieve_movie_details, URL_DICTIONARY, prepopulate_edit_list_form, update_movie_list_data, validate_and_edit_profile
+from utility_functions import add_movie_to_list, validate_and_signup, validate_and_create_movie_list, pre_populate_user_edit_form_fields
 
 
 app = Flask(__name__)
@@ -189,19 +189,13 @@ def get_edit_profile_form(id):
 def edit_user_profile(id):
     form = EditUserForm()
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    
-    if form.validate_on_submit():
-        update_user_data(form, this_user) 
-        
-        if authenticate(this_user.username, form.password.data):        
-            db.session.add(this_user)
-            db.session.commit()
-            flash('Your account has been updated.', 'success')
-        else:
-            flash('Incorrect password.', 'danger')
+    if validate_and_edit_profile(form, this_user):
+        flash('Your account has been updated.', 'success')
+    else:
+        flash('Incorrect password.', 'danger')
         
     return redirect(f"/users/{this_user.id}")
-    
+
 
 @app.route('/users/delete', methods=['GET', 'DELETE'])
 def delete_user():
