@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, NewUserCommentForm, EditListForm
 from user_functions import signup, authenticate, is_following, is_followed_by
 from utility_functions import retrieve_movie_details, URL_DICTIONARY, prepopulate_edit_list_form, update_movie_list_data
+from utility_functions import add_movie_to_list, validate_and_signup, validate_and_create_movie_list
 
 
 app = Flask(__name__)
@@ -34,6 +35,12 @@ def do_login(user):
 def do_logout():
     if CURRENT_USER_KEY in session:
         del session[CURRENT_USER_KEY]
+        
+        
+def retrieve_users(id):
+    user = User.query.get_or_404(id)
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    return user, this_user
 
 
 @app.route('/')
@@ -46,40 +53,39 @@ def homepage():
     return render_template('homepage.html', this_user=this_user)
 
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup_():
+@app.route('/signup', methods=['GET'])
+def get_signup_form():
     form = NewUserForm()
-
-    if form.validate_on_submit():
-        try:
-            this_user = signup(
-                username=form.username.data,
-                email=form.email.data,
-                password=form.password.data,
-                user_pic_url=form.user_pic_url.data or User.user_pic_url.default.arg
-            )
-            
-            db.session.add(this_user)
-            db.session.commit()
-        
-        except IntegrityError:
-            flash('Username already taken', 'danger')
-            return render_template('/signup_and_login/signup.html', form=form)
-        
-        do_login(this_user)
-        flash(f"Welcome to MovieBuddy, {this_user.username}", 'success')
-        return redirect(f"/users/{this_user.id}")
-    
-    
     return render_template('/signup_and_login/signup.html', form=form)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/signup', methods=['POST'])
+def user_signup():
+    form = NewUserForm()
+    this_user = validate_and_signup(form)
+    
+    if not this_user:
+        flash('Username already taken', 'danger')
+        return render_template('/signup_and_login/signup.html', form=form)
+        
+    do_login(this_user)
+    flash(f"Welcome to MovieBuddy, {this_user.username}", 'success')
+    
+    return redirect(f"/users/{this_user.id}")
+
+
+@app.route('/login', methods=['GET'])
+def get_login_form():
+    form = UserLoginForm()
+    return render_template('/signup_and_login/login.html', form=form) 
+    
+
+@app.route('/login', methods=['POST'])
 def login():
     form = UserLoginForm()
-    
     if form.validate_on_submit():
         user = authenticate( form.username.data, form.password.data)
+        
         if user:
             do_login(user)
             flash(f"Welcome back {user.username}", 'success')
@@ -87,7 +93,7 @@ def login():
         
         flash('Invalid credentials. Please try again.', 'danger')
     
-    return render_template('/signup_and_login/login.html', form=form) 
+    return redirect('/login')
 
 
 @app.route('/logout')
@@ -101,8 +107,8 @@ def logout():
 @app.route('/get-movie-by-query', methods=['GET'])
 def get_move_by_query():
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    title = request.args.get('q') # just assume the query is a title for now
-    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/base/{title}") # Only works locally; fix this to accomodate bothe cases 
+    title = request.args.get('q')
+    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/base/{title}") # Only works locally 
     res = json.loads(res.text)['results']
 
     return render_template('search/show-query-results.html', res=res, query=title, this_user=this_user)
@@ -127,56 +133,47 @@ def show_movie_details(imDb_id):
 
 @app.route('/users/<int:id>')
 def show_user_profile(id):
-    user = User.query.get_or_404(id)
-    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    user, this_user = retrieve_users(id)
     return render_template('user/show_profile_details.html', user=user, this_user=this_user)
 
 
 @app.route('/users/<int:id>/show-lists', methods=['GET'])
 def show_user_lists(id):
-    user = User.query.get_or_404(id)
-    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    
+    user, this_user = retrieve_users(id)
     return render_template('user/show_user_lists.html', user=user, this_user=this_user)
 
 
 @app.route('/users/<int:id>/following', methods=['GET']) # todo
 def show_user_following(id):
-    user = User.query.get_or_404(id)
-    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    user, this_user = retrieve_users(id)
     return render_template('user/following.html', user=user, this_user=this_user, is_following=is_following)
 
 
 @app.route('/users/<int:id>/followers', methods=['GET']) # todo
 def show_user_followers(id):
-    user = User.query.get_or_404(id)
-    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    user, this_user = retrieve_users(id)
     return render_template('user/followers.html', user=user, this_user=this_user, is_following=is_following)
 
 
-@app.route('/users/new-list', methods=['GET', 'POST']) # todo
+@app.route('/users/new-list', methods=['GET']) 
+def get_new_list_form():
+    form = NewListForm()
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form, new=True)
+    
+
+@app.route('/users/new-list', methods=['POST'])
 def make_new_movie_list():
     form = NewListForm()
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    new_list = validate_and_create_movie_list(form, this_user)
     
-    if form.validate_on_submit():
-        try:
-            new_list = MovieList(
-                owner=this_user.id,
-                title=form.title.data,
-                description=form.description.data,
-                list_image_url=form.list_image_url.data
-            )
-            
-            db.session.add(new_list)
-            db.session.commit()
+    if not new_list:
+        flash('Invalid', 'danger')
+        return redirect('users/new-list')
         
-        except IntegrityError:
-            flash('Generic Error Message For Now (come back)', 'danger')
-        
-        return redirect(f"/users/{this_user.id}/show-lists")
-        
-    return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form, new=True)
+    flash(f"{new_list.title} successfully created", 'success')
+    return redirect(f"/users/{this_user.id}/show-lists")
 
 
 @app.route('/users/<int:id>/edit-profile', methods=['GET'])
@@ -240,8 +237,7 @@ def unfollow(followed_user_id):
 
 @app.route('/users/<int:user_id>/lists/<int:list_id>/details')
 def show_user_list_details(user_id, list_id):
-    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    user = User.query.get_or_404(user_id)
+    user, this_user = retrieve_users(user_id)
     movie_list = MovieList.query.get_or_404(list_id)
     return render_template('lists/show_user_list.html', user=user,this_user=this_user,movie_list=movie_list)
     
@@ -280,20 +276,6 @@ def add_movie_to_list_form(movie_list_id, imDb_id):
     add_movie_to_list(movie_list_id, imDb_id)
     
     return redirect(f"/users/{this_user.id}/lists/{movie_list_id}/details")
-    
-    
-def add_movie_to_list(movie_list_id, imDb_id):
-    movie_details = retrieve_movie_details(imDb_id)
-    movie_add = Movie(
-        IMDB_id=imDb_id,
-        list_id=movie_list_id,
-        name=movie_details['title'],
-        poster_url=movie_details['poster'],
-        plot=movie_details['plot']
-    )
-    db.session.add(movie_add)
-    db.session.commit()
-    return
 
 
 @app.route('/users/lists/movies/<int:movie_id>/remove', methods=['GET', 'DELETE'])
