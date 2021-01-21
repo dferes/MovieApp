@@ -11,7 +11,7 @@
                         <img src="{{movie_list.list_image_url}}" alt="" style="height: 8.5rem; max-width:20vw;">
                     </div>
                 </a>
-                <div class="card-block px-2">
+                <div class="card-block px-2" style="width: 50vw;">
                     <br>
                     <a href="/users/{{user.id}}/lists/{{movie_list.id}}/details">
                         <h5 class="card-title">{{movie_list.title}} ({{movie_list.movies | length}})</h5>
@@ -24,16 +24,19 @@
                     <div class="row movie-list-card">
                         {% if this_user.id == user.id %}
                         <div class="col list-card-button-area">
-                            <form method="DELETE" action="/users/delete/{{movie_list.id}}" class="form-inline">
-                                <button class="btn btn-sm btn-outline-danger">Delete</button>&nbsp; &nbsp;
-                                <a href="/users/{{ this_user.id }}/list/{{movie_list.id}}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                            </form>
+                            <div class="row"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <!-- # PUT/PATCH wont work here. Why? -->
+                                <form method="POST" action="/users/lists/{{movie_list.id}}/edit" class="form-inline">
+                                    <button class="btn btn-sm btn-outline-primary">Edit</button>&nbsp; &nbsp;
+                                </form>
+                                <form method="DELETE" action="/users/lists/{{movie_list.id}}/delete" class="form-inline">
+                                    <button class="btn btn-sm btn-outline-danger">Delete</button>&nbsp; &nbsp;
+                                </form>
+                            </div>
                         </div>
                         {% endif%}
-                        <div class="col">
-                            <small class="comments-number"> Comments </small>
-                        </div>
                     </div>
+                    <small class="comments-number">{{movie_list.comments | length}} &nbsp; Comments </small>
                 </div>
             </div>
         </div> 
