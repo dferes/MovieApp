@@ -1,6 +1,10 @@
 import requests
 import json
 from api_key import api_key
+from models import db, Movie, MovieList
+from sqlalchemy.exc import IntegrityError
+from user_functions import signup
+
 
 # Note that you are limited to 100 API calls per day...
 base_url = f"https://imdb-api.com/en/API/Search/{api_key}"
@@ -70,3 +74,60 @@ def prepopulate_edit_list_form(movie_list, form):
     movie_list.title = form.title.data if form.title.data else movie_list.title
     movie_list.description = form.description.data if form.description.data else movie_list.description
     movie_list.list_image_url = form.list_image_url.data if form.list_image_url.data else movie_list.list_image_url
+
+
+def add_movie_to_list(movie_list_id, imDb_id):
+    movie_details = retrieve_movie_details(imDb_id)
+    movie_add = Movie(
+        IMDB_id=imDb_id,
+        list_id=movie_list_id,
+        name=movie_details['title'],
+        poster_url=movie_details['poster'],
+        plot=movie_details['plot']
+    )
+    
+    db.session.add(movie_add)
+    db.session.commit()
+    return
+
+
+def validate_and_signup(form):
+    if form.validate_on_submit():
+        try:
+            this_user = signup(
+                username=form.username.data,
+                email=form.email.data,
+                password=form.password.data,
+                user_pic_url=form.user_pic_url.data or User.user_pic_url.default.arg
+            )
+            
+            db.session.add(this_user)
+            db.session.commit()
+        
+        except IntegrityError:
+            return None
+        
+        return this_user
+    
+    return None
+
+
+def validate_and_create_movie_list(form, this_user):
+    if form.validate_on_submit():
+        try:
+            new_list = MovieList(
+                owner=this_user.id,
+                title=form.title.data,
+                description=form.description.data,
+                list_image_url=form.list_image_url.data
+            )
+            
+            db.session.add(new_list)
+            db.session.commit()
+    
+        except IntegrityError:
+            return None
+        
+        return new_list
+    
+    return None
