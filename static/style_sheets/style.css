@@ -361,6 +361,13 @@ p.card-bio {
     margin: 2em 10px 0;
 }
 
+.user-lists-card-text {
+    max-width: 55vw; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+
 .comments-number {
     position: absolute;
     bottom: 10%;
@@ -391,4 +398,21 @@ p.card-bio {
     position: absolute;
     right: 20%;  
     bottom: 30%;
+}
+
+.movie-remove-button-div {
+    position: absolute;
+    right: 5%;
+    bottom: 5%;
+}
+
+.list-card-movie-plot {
+    max-width: 57vw; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+
+.user-list-movie-title {
+    margin-left: 23%;
 }
