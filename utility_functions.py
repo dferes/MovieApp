@@ -3,7 +3,7 @@ import json
 from api_key import api_key
 from models import db, Movie, MovieList
 from sqlalchemy.exc import IntegrityError
-from user_functions import signup
+from user_functions import signup, authenticate
 
 
 # Note that you are limited to 100 API calls per day...
@@ -131,3 +131,16 @@ def validate_and_create_movie_list(form, this_user):
         return new_list
     
     return None
+
+
+def validate_and_edit_profile(form, this_user):
+    if form.validate_on_submit():
+        update_user_data(form, this_user) 
+        
+        if authenticate(this_user.username, form.password.data):        
+            db.session.add(this_user)
+            db.session.commit()
+            
+            return True
+    
+    return False
