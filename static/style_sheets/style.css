@@ -362,9 +362,33 @@ p.card-bio {
 }
 
 .comments-number {
-    padding-left: 9em;
+    position: absolute;
+    bottom: 10%;
+    right: 3.5%;
 }
 
 .list-card-button-area {
     margin-top: -0.3em;
+}
+
+.list-card-button-container {
+    position: absolute;
+    top: 0;
+    right: 10%;
+}
+
+.rating-value {
+    position: absolute;
+    right: 20%;  
+}
+
+.ratings-text {
+    position: absolute;
+    right: 10%;  
+}
+
+.add-to-list-form-div {
+    position: absolute;
+    right: 20%;  
+    bottom: 30%;
 }
