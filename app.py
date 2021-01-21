@@ -143,13 +143,13 @@ def show_user_lists(id):
     return render_template('user/show_user_lists.html', user=user, this_user=this_user)
 
 
-@app.route('/users/<int:id>/following', methods=['GET']) # todo
+@app.route('/users/<int:id>/following', methods=['GET'])
 def show_user_following(id):
     user, this_user = retrieve_users(id)
     return render_template('user/following.html', user=user, this_user=this_user, is_following=is_following)
 
 
-@app.route('/users/<int:id>/followers', methods=['GET']) # todo
+@app.route('/users/<int:id>/followers', methods=['GET'])
 def show_user_followers(id):
     user, this_user = retrieve_users(id)
     return render_template('user/followers.html', user=user, this_user=this_user, is_following=is_following)
