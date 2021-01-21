@@ -1,10 +1,18 @@
 {% extends 'base.html' %}
 {% block title %}New List{% endblock %}
 {% block content %}
+
+{% set button_word = 'Make' %}
+{% set title = "Let's get started!" %}
+{% if new  == False %}
+    {% set button_word = 'Update' %}
+    {% set title = "Let's make some changes" %}
+{% endif %}
+
 <div class="form-container">
     <div class="row justify-content-md-center">
         <div class="col-md-7 col-lg-5">
-            <h2 class="text-center join-message">Let's get started</h2>
+            <h2 class="text-center join-message">{{title}}</h2>
             <form method="POST" id="user_form">
                 {{ form.hidden_tag() }}
         
@@ -16,7 +24,7 @@
                 <br>
                 {% endfor %}
                 <div class="edit-btn-area">
-                    <button class="btn btn-primary btn-lg btn-block">Make</button>
+                    <button class="btn btn-primary btn-lg btn-block">{{button_word}}</button>
                     <a href="/users/{{ this_user.id }}" class="btn btn-outline-danger">Cancel</a>
                 </div>
 
