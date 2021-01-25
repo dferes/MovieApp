@@ -2,7 +2,7 @@ import os
 from unittest import TestCase
 from models import db, User, Follows, Movie, MovieList
 from user_functions import signup, authenticate
-from forms import UserLoginForm
+from forms import UserLoginForm, NewUserForm
 from app import app, CURRENT_USER_KEY
 
 os.environ['DATABASE_URL'] = "postgresql:///movie_buddy_test"
@@ -83,9 +83,14 @@ class UserViewTestCase(TestCase):
             if use_id_in_query:      
                 if other_testuser_id:
                     return c.get(f"/{base}/{other_testuser_id}{url}") 
+                
                 return c.get(f"/{base}/{this_testuser_id}{url}")
             
             return c.get(f"/{base}{url}")
+
+    def retrieve_post_request(self, data, url):
+        with self.client as c:
+            return c.post(url, data=data, follow_redirects=True)
 
     def test_this_user_profile_shows_user_details(self):
         resp = self.retrieve_get_response('users', '',  self.testuser_id)
@@ -148,7 +153,11 @@ class UserViewTestCase(TestCase):
         resp = self.retrieve_get_response('users', '/edit-profile', self.testuser_id)
 
         self.assertEqual(resp.status_code, 200)
-
+        self.assertIn('Make some updates', str(resp.data))
+        self.assertIn('Username', str(resp.data))
+        self.assertIn('E-mail', str(resp.data))
+        self.assertIn('Image URL', str(resp.data))
+        self.assertIn('Edit this user!', str(resp.data))
 
     def test_show_details_of_specific_movie_list(self):
         self.setup_movie_lists()
@@ -160,3 +169,48 @@ class UserViewTestCase(TestCase):
         self.assertIn('Delete', str(resp.data))
         self.assertIn('Edit', str(resp.data))
         self.assertIn('@testuser', str(resp.data))
+
+    def test_get_edit_movie_list_form(self):
+        self.setup_movie_lists()
+        resp = self.retrieve_get_response('users', f"/lists/{self.movie_list1_id}/edit", 
+            self.testuser_id, 
+            self.testuser_id, use_id_in_query=False)
+        
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('make some changes', str(resp.data))
+        self.assertIn('List Title', str(resp.data))
+        self.assertIn('Description', str(resp.data))
+        self.assertIn('List Image', str(resp.data))
+        self.assertIn('Update', str(resp.data))
+
+    def test_signup_form_post(self):
+        data = {
+            'username': 'userGuy',
+            'email': 'userGuy@gmail.com',
+            'password': 'password1',
+            'user_pic_url': None
+        }
+        
+        resp = self.retrieve_post_request(data, '/signup')
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Welcome to MovieBuddy, userGuy', str(resp.data))
+        self.assertIn('@userGuy', str(resp.data))
+        self.assertIn('None', str(resp.data))
+        self.assertIn('Edit Profile', str(resp.data))
+        
+    def test_edit_user_form_post(self):
+        self.retrieve_get_response('users', '',  self.testuser_id)
+
+        data = {
+            'username': 'dferes',
+            'email': 'dferes23@gmail.com',
+            'bio': 'This is my bio',
+            'password': 'testuser'
+        }
+        resp = self.retrieve_post_request(data, f"/users/{self.testuser_id}/edit-profile")
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Your account has been updated.', str(resp.data))
+        self.assertIn('@dferes', str(resp.data))
+        self.assertIn('This is my bio', str(resp.data))

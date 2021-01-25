@@ -98,7 +98,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    # user = User.query.get_or_404(session[CURRENT_USER_KEY])
     do_logout()
     
     return redirect('/')
@@ -229,7 +229,7 @@ def unfollow(followed_user_id):
     return redirect(f"/users/{this_user.id}/following")
 
 
-@app.route('/users/<int:user_id>/lists/<int:list_id>/details')
+@app.route('/users/<int:user_id>/lists/<int:list_id>/details', methods=['GET'])
 def show_user_list_details(user_id, list_id):
     user, this_user = retrieve_users(user_id)
     movie_list = MovieList.query.get_or_404(list_id)
@@ -264,7 +264,7 @@ def edit_user_list(list_id):
     return render_template('lists/new_movie_list_form.html', this_user=this_user, form=form, new=False)
 
 
-@app.route('/users/lists/<int:movie_list_id>/add-movie/<string:imDb_id>', methods=['GET'])
+@app.route('/users/lists/<int:movie_list_id>/add-movie/<string:imDb_id>', methods=['GET', 'POST'])
 def add_movie_to_list_form(movie_list_id, imDb_id):
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     add_movie_to_list(movie_list_id, imDb_id)
