@@ -1,7 +1,7 @@
 import requests
 import json
 from api_key import api_key
-from models import db, Movie, MovieList
+from models import db, Movie, MovieList, User
 from sqlalchemy.exc import IntegrityError
 from user_functions import signup, authenticate
 
