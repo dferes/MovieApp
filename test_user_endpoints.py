@@ -37,6 +37,9 @@ class UserViewTestCase(TestCase):
         self.u2.id = self.u2_id
         
         self.u3 = signup("hij", "test3@test.com", "password", None)
+        self.u3_id = 42
+        self.u3.id = self.u3_id
+
         self.u4 = signup("testing", "test4@test.com", "password", None)
 
         db.session.add_all([self.testuser, self.u1, self.u2, self.u3, self.u4])
@@ -56,23 +59,23 @@ class UserViewTestCase(TestCase):
         db.session.commit()
 
     def setup_movie_lists(self):
-        list1= MovieList(owner=self.testuser_id, 
+        self.movie_list1= MovieList(owner=self.testuser_id, 
             title='List 1', 
             description='My first list',
             list_image_url='https://us.v-cdn.net/5020761/uploads/editor/dd/mr3u75prp4g56.jpg')
         
         self.movie_list1_id = 998
-        list1.id = self.movie_list1_id
+        self.movie_list1.id = self.movie_list1_id
 
-        list2= MovieList(owner=self.testuser_id, 
+        self.movie_list2= MovieList(owner=self.testuser_id, 
             title='List 2', 
             description='My second list',
             list_image_url='https://doublefeature.fm/images/covers/the-matrix.jpg')
         
         self.movie_list2_id = 999
-        list2.id = self.movie_list2_id
+        self.movie_list2.id = self.movie_list2_id
 
-        db.session.add_all([list1, list2])
+        db.session.add_all([self.movie_list1, self.movie_list2])
         db.session.commit()
 
     def retrieve_get_response(self, base, url, this_testuser_id, other_testuser_id=None, use_id_in_query=True):
@@ -214,3 +217,58 @@ class UserViewTestCase(TestCase):
         self.assertIn('Your account has been updated.', str(resp.data))
         self.assertIn('@dferes', str(resp.data))
         self.assertIn('This is my bio', str(resp.data))
+
+    def test_add_new_movie_list_form_post(self):
+        self.retrieve_get_response('users', '',  self.testuser_id)
+        data = {
+            'title': 'Old Scary Movies',
+            'description': 'old scary movies from the 80s',
+            'list_image_url': 'https://doublefeature.fm/images/covers/the-matrix.jpg'
+        }
+        resp = self.retrieve_post_request(data, '/users/new-list')
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Old Scary Movies successfully created', str(resp.data))
+        self.assertIn('old scary movies from the 80s', str(resp.data))
+
+    def test_add_new_followed_user_to_this_users_followed_users(self):
+        self.retrieve_get_response('users', '',  self.testuser_id)
+
+        resp = self.retrieve_post_request(None, f"/users/follow/{self.u3_id}")
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('@hij', str(resp.data))
+    
+    def test_remove_followed_user_from_this_users_followed_users(self):
+        self.setup_followers()
+        self.retrieve_get_response('users', '',  self.testuser_id)
+
+        resp = self.retrieve_post_request(None, f"/users/stop-following/{self.u2_id}")
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotIn('@hij', str(resp.data))
+    
+    def test_edit_movie_list_form_post(self):
+        self.retrieve_get_response('users', '',  self.testuser_id)
+        self.setup_movie_lists()
+
+        data = {
+            'title': 'Edited List Title',
+            'description': 'Edited list description'
+        }
+        resp = self.retrieve_post_request(data, f"/users/lists/{self.movie_list1_id}/edit")
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Edited List Title', str(resp.data))
+        self.assertIn('Edited list description', str(resp.data))
+
+    # def test_add_new_movie_to_existing_movie_list_(self):
+    #     self.retrieve_get_response('users', '',  self.testuser_id)
+    #     self.setup_movie_lists()
+
+    # def test_delete_user_movie_list_removes_list_from_movie_lists_page(self):
+
+    # def test_remove_movie_from_existing_movie_list(self):
+
+    # def test_delete_user(self):
+
