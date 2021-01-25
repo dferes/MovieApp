@@ -98,7 +98,6 @@ def login():
 
 @app.route('/logout')
 def logout():
-    # user = User.query.get_or_404(session[CURRENT_USER_KEY])
     do_logout()
     
     return redirect('/')
