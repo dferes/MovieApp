@@ -416,3 +416,59 @@ p.card-bio {
 .user-list-movie-title {
     margin-left: 23%;
 }
+
+#messages .list-group-item a:not(.message-link) {
+    position: relative;
+    z-index: 2;
+}
+  
+#messages .list-group-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 7px 20px 12px;
+}
+  
+#messages:not(.no-hover) .list-group-item:hover {
+    background-color: #e6ecf0;
+}
+
+.message-area,
+.timeline-image {
+  display: inline-block;
+}
+
+.timeline-image {
+    border-radius: 3.25em;
+    height: 3.25em;
+    width: 3.25em;
+    margin-top: 2px;
+}
+
+.message-area {
+  margin-left: 10px;
+}
+
+#messages.no-hover .message-area {
+    width: 100%;
+}
+
+.comment-box-container {
+    margin-right: auto;
+    padding-left: 2em;
+}
+
+.comment-box {
+    width: 66vw;
+    margin-top: 0.875em;
+    border-radius: 2rem;
+}
+
+.comment-box-button-container {
+    position: relative;
+    padding-left: 54vw;
+    padding-top: 0.6em;;
+}
+
+.comment-cancel-button {
+    margin-left: 1em;
+}
