@@ -279,15 +279,18 @@ def remove_movie_from_list(movie_id):
     
     return redirect(f"/users/{this_user.id}/show-lists")
 
-@app.route('/users/<int:user_id>/lists/<int:movie_list_id>/add-comment', methods=['POST'])
-def add_new_comment_to_movie_list(user_id, movie_list_id):
-    comment_text = request.form.get('comment-text')
-    comment = Comment(user_id=user_id, list_id=movie_list_id, content=comment_text)
+@app.route('/api/new-comment', methods=['POST'])
+def add_new_comment_to_movie_list():
+    user_id = request.json['userID']
+    list_id = request.json['listID']
+    content = request.json['content']
 
-    db.session.add(comment)
+    new_comment = Comment(user_id=user_id, list_id=list_id, content=content)
+
+    db.session.add(new_comment)
     db.session.commit()
     
-    return redirect(f"/users/{user_id}/lists/{movie_list_id}/details")
+    return (jsonify(True), 201)
 
 @app.route('/api/get-movie-details/<string:type>/<string:query>', methods=['GET'])
 def get_movie_details(query, type):
