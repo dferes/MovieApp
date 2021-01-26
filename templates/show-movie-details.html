@@ -59,7 +59,7 @@
          <div class="card-block px-2">
             <br>
             <h5 class="card-title">{{actor['name']}} <small>as {{actor['asCharacter']}}</small> </h5>
-            <p class="card-text">Description goes here...</p>
+            <p class="card-text"> <a href="https://en.wikipedia.org/wiki/{{ actor['name'] }}">More about {{actor['name']}}</a> </p>
          </div>
       </div>
       <hr>
@@ -74,9 +74,8 @@
       <div class="card">
          <img class="card-img-top" src="" alt="">
          <div class="card-body">
-            <p class="card-text">
-               {{director['name']}}
-            </p>
+            <p class="card-text">{{director['name']}}</p>
+            <p class="card-text"> <a href="https://en.wikipedia.org/wiki/{{ director['name'] }}">More about {{director['name']}}</a> </p>
          </div>
       </div>
       {% endfor %}
