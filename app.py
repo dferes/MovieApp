@@ -1,14 +1,12 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, User, Follows, MovieList, Movie, Comment
+from models import db, User, MovieList, Movie, Comment
 from secret_key import key
-from api_key import api_key
 import requests
 import json
-from sqlalchemy.exc import IntegrityError
 from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, NewUserCommentForm, EditListForm
-from user_functions import signup, authenticate, is_following, is_followed_by
+from user_functions import authenticate, is_following
 from utility_functions import retrieve_movie_details, URL_DICTIONARY, prepopulate_edit_list_form, update_movie_list_data, validate_and_edit_profile
 from utility_functions import add_movie_to_list, validate_and_signup, validate_and_create_movie_list, pre_populate_user_edit_form_fields
 
@@ -203,7 +201,7 @@ def delete_user():
 
     db.session.delete(user)
     db.session.commit()
-
+    flash('We will miss you!', 'success')
     return redirect("/")
 
 
