@@ -1,8 +1,7 @@
 import os
 from unittest import TestCase
-from models import db, User, Follows, Movie, MovieList
-from user_functions import signup, authenticate
-from forms import UserLoginForm, NewUserForm
+from models import db, User, Follows, MovieList
+from user_functions import signup
 from app import app, CURRENT_USER_KEY
 
 os.environ['DATABASE_URL'] = "postgresql:///movie_buddy_test"
@@ -95,6 +94,10 @@ class UserViewTestCase(TestCase):
         with self.client as c:
             return c.post(url, data=data, follow_redirects=True)
 
+    def retrieve_delete_request(self, data, url):
+        with self.client as c:
+            return c.delete(url, data=data, follow_redirects=True)
+
     def test_this_user_profile_shows_user_details(self):
         resp = self.retrieve_get_response('users', '',  self.testuser_id)
 
@@ -111,6 +114,17 @@ class UserViewTestCase(TestCase):
         self.assertIn('Follow', str(resp.data))
         self.assertNotIn('Edit Profile', str(resp.data))
         self.assertNotIn('Delete Profile', str(resp.data))
+
+    def test_delete_user(self):
+        resp = self.retrieve_get_response('users', '',  self.testuser_id)
+        resp = self.retrieve_delete_request(None, f"/users/delete")
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('We will miss you!', str(resp.data))
+        
+        resp = self.retrieve_get_response('users', '',  self.testuser_id)
+        
+        self.assertEqual(resp.status_code, 404)   
 
     def test_users_following_page_shows_following(self):
         self.setup_followers()
@@ -262,13 +276,40 @@ class UserViewTestCase(TestCase):
         self.assertIn('Edited List Title', str(resp.data))
         self.assertIn('Edited list description', str(resp.data))
 
-    # def test_add_new_movie_to_existing_movie_list_(self):
-    #     self.retrieve_get_response('users', '',  self.testuser_id)
-    #     self.setup_movie_lists()
+    def test_add_new_movie_to_existing_movie_list(self):
+        imdb_id = 'tt1375666' #Inception
+        self.retrieve_get_response('users', '',  self.testuser_id)
+        self.setup_movie_lists()
+        
+        resp = self.retrieve_post_request(None, f"/users/lists/{self.movie_list1_id}/add-movie/{imdb_id}")
+        
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Inception', str(resp.data))
+        self.assertIn('Remove', str(resp.data))
+        self.assertEqual(len(MovieList.query.get(self.movie_list1_id).movies), 1)
 
-    # def test_delete_user_movie_list_removes_list_from_movie_lists_page(self):
+    def test_remove_movie_from_existing_movie_list(self): 
+        imdb_id = 'tt1375666' #Inception
+        self.retrieve_get_response('users', '',  self.testuser_id)
+        self.setup_movie_lists()
+        resp = self.retrieve_post_request(None, f"/users/lists/{self.movie_list1_id}/add-movie/{imdb_id}")
+        
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Inception', str(resp.data))
 
-    # def test_remove_movie_from_existing_movie_list(self):
+        movie = MovieList.query.get(self.movie_list1_id).movies[0]
+        resp = self.retrieve_delete_request(None, f"/users/lists/movies/{movie.id}/remove")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual( len(MovieList.query.get(self.movie_list1_id).movies), 0)
+        self.assertNotIn('Remove', str(resp.data))
+        
+    def test_delete_user_movie_list_removes_list_from_movie_lists_page(self):
+        self.retrieve_get_response('users', '',  self.testuser_id)
+        self.setup_movie_lists()
+        self.assertEqual( len(User.query.get(self.testuser_id).lists), 2)
+        resp = self.retrieve_delete_request(None, f"/users/lists/{self.movie_list1_id}/delete")
 
-    # def test_delete_user(self):
-
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual( len(User.query.get(self.testuser_id).lists), 1)
+        self.assertNotIn('List 1', str(resp.data))
+        self.assertNotIn('My first list', str(resp.data))
