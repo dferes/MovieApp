@@ -84,24 +84,28 @@
                <li class="list-group-item">
                   <img src="{{ this_user.user_pic_url }}" alt="" class="timeline-image">
                   <div class="comment-box-container">
-                     <form method="POST" action="/users/{{this_user.id}}/lists/{{movie_list.id}}/add-comment">
-                        <input required="true" type="text" name="comment-text" class="comment-box", placeholder="Add a public comment..."></input>
-                        <div class="comment-box-button-container">
-                           <button class="btn btn-sm btn-outline-primary comment-submit-button">Comment</button>   
-                           <a href="#" class="btn btn-sm btn-outline-danger comment-cancel-button">Cancel</a>
-                        </div>
-                     </form>
+                     <input required="true" type="text" name="comment-text" class="comment-box", placeholder="Add a public comment..."></input>
+                     <div class="comment-box-button-container">
+                        <button class="btn btn-sm btn-outline-primary comment-submit-button">Comment</button>   
+                        <button class="btn btn-sm btn-outline-danger comment-cancel-button">Cancel</button>
+                     </div>
                   </div>
-               </li>    
+               </li> 
+            </ul>   
+               <input type="hidden" class="user-id" name="user-id" value="{{this_user.id}}">
+               <input type="hidden" class="user-pic-url" name="user-pic-url" value="{{this_user.user_pic_url}}">
+               <input type="hidden" class="username" name="username" value="{{this_user.username}}">
+               <input type="hidden" class="movie_list_id" name="movie_list_id" value="{{movie_list.id}}">
+            <ul class="list-group comment-list comment-list-body" id="messages">
                {% for comment in movie_list.comments %}
                   <li class="list-group-item">
-                     <a href="/users/{{ comment.user_id }}">
-                        <img src="{{ comment.user.user_pic_url }}" alt="" class="timeline-image">
+                     <a href="/users/{{ movie_list.comments[loop.revindex0].user_id }}">
+                        <img src="{{ movie_list.comments[loop.revindex0].user.user_pic_url }}" alt="" class="timeline-image">
                      </a>
                      <div class="message-area">
-                        <a href="/users/{{ comment.user.id }}">@{{ comment.user.username }}</a>
-                        <span class="text-muted">{{ comment.timestamp.strftime('%d %B %Y') }}</span>
-                        <p>{{ comment.content }}</p>
+                        <a href="/users/{{ movie_list.comments[loop.revindex0].user.id }}">@{{ comment.user.username }}</a>
+                        <span class="text-muted">{{ movie_list.comments[loop.revindex0].timestamp.strftime('%d %B %Y') }}</span>
+                        <p>{{ movie_list.comments[loop.revindex0].content }}</p>
                      </div>
                   </li>
                {% endfor %}
