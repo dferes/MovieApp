@@ -56,6 +56,12 @@
                {{movie.plot}}
             </p>
             <hr>
+            {% if movie.name.endswith(')') %}
+               {% set title = movie.name[:movie.name.find('(')] %}
+            {% else %}
+               {% set title = movie.name %}
+            {% endif %}
+            <small><a href="https://wikipedia.com/wiki/{{title}}">More about {{title}}</a></small>
          </div>
          {% if this_user.id == user.id %}
          <div class="movie-remove-button-div">
@@ -79,7 +85,7 @@
                   <img src="{{ this_user.user_pic_url }}" alt="" class="timeline-image">
                   <div class="comment-box-container">
                      <form method="POST" action="/users/{{this_user.id}}/lists/{{movie_list.id}}/add-comment">
-                        <input type="text" name="comment-text" class="comment-box", placeholder="Add a public comment..."></input>
+                        <input required="true" type="text" name="comment-text" class="comment-box", placeholder="Add a public comment..."></input>
                         <div class="comment-box-button-container">
                            <button class="btn btn-sm btn-outline-primary comment-submit-button">Comment</button>   
                            <a href="#" class="btn btn-sm btn-outline-danger comment-cancel-button">Cancel</a>
