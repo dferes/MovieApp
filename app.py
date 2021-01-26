@@ -279,6 +279,15 @@ def remove_movie_from_list(movie_id):
     
     return redirect(f"/users/{this_user.id}/show-lists")
 
+@app.route('/users/<int:user_id>/lists/<int:movie_list_id>/add-comment', methods=['POST'])
+def add_new_comment_to_movie_list(user_id, movie_list_id):
+    comment_text = request.form.get('comment-text')
+    comment = Comment(user_id=user_id, list_id=movie_list_id, content=comment_text)
+
+    db.session.add(comment)
+    db.session.commit()
+    
+    return redirect(f"/users/{user_id}/lists/{movie_list_id}/details")
 
 @app.route('/api/get-movie-details/<string:type>/<string:query>', methods=['GET'])
 def get_movie_details(query, type):
