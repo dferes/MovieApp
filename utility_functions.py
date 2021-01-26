@@ -41,7 +41,7 @@ def retrieve_movie_details(imDb_id):
             'title': res['fullTitle'],         
             'directors':res['directors'], 
             'writers':res['writers'],
-            'actors':res['actors'][:10],
+            'actors':res['actors'][:12],
             'plot':wiki_response['plotShort']['plainText'],
             'poster':poster_response['posters'][0]['link'],
             'ratings':collect_ratings(ratings_response)
