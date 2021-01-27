@@ -37,17 +37,18 @@ $('document').ready(function() {
         let userID = $(".user-id").val();
         let content = $(".comment-box").val();
         let listID = $(".movie_list_id").val();
+        if (content !== "") {
+            const newCommentResponse = await axios.post('/api/new-comment', {
+                userID, listID, content
+            });
+            
+            if (newCommentResponse.data === true) {
+                let newComment = commentListElementHTML(username, userID, userPicURL, content);
+                $(".comment-list-body").prepend(newComment);
         
-        const newCommentResponse = await axios.post('http://127.0.0.1:5000/api/new-comment', {
-            userID, listID, content
-        });
-        
-        if (newCommentResponse.data === true) {
-            let newComment = commentListElementHTML(username, userID, userPicURL, content);
-            $(".comment-list-body").prepend(newComment);
-    
-            $(".comment-box").val('');
-            $('.comment-box-button-container').hide();
+                $(".comment-box").val('');
+                $('.comment-box-button-container').hide();
+            }
         }
     
     });
