@@ -5,13 +5,13 @@
     {% for movie_list in user.lists %}
     <div class="row">
         <div class="col-md-9">
-            <div class="card flex-row flex-wrap" style="height: 10rem; width: 75vw;">
+            <div class="card flex-row flex-wrap a-movie-list-card">
                 <a href="/users/{{user.id}}/lists/{{movie_list.id}}/details">
                     <div class="card-header border-0">
-                        <img src="{{movie_list.list_image_url}}" alt="" style="height: 8.5rem; max-width:20vw;">
+                        <img class="a-movie-list-card-image" src="{{movie_list.list_image_url}}" alt="">
                     </div>
                 </a>
-                <div class="card-block px-2" style="width: 50vw;">
+                <div class="card-block px-2 a-movie-card-block">
                     <br>
                     <a href="/users/{{user.id}}/lists/{{movie_list.id}}/details">
                         <h5 class="card-title">{{movie_list.title}} ({{movie_list.movies | length}})</h5>

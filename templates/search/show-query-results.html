@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Results For {{query}}{% endblock %}
 {% block content %}
-<h1 class="text-center">Results for {{query}}</h1>
+<h1 class="text-center query-results-text">Results for {{query}}</h1>
 <hr>
 <div class="container">
     <div class="row">
@@ -9,8 +9,8 @@
         <div class="col col-lg-4 col-md-6 col-sm-12">
             <div class="container">
                 <a href="/show-movie-details/{{movie_dict['id']}}">
-                    <div class="card" style="width: 18rem;">
-                        <img class="card-img-top" src="{{movie_dict['image']}}" alt="">
+                    <div class="card query-result-card">
+                        <img class="card-img-top query-results-poster" src="{{movie_dict['image']}}" alt="">
                         <div class="card-body">
                             <h5 class="card-title">{{movie_dict['title']}}</h5>
                             <p class="card-text">{{movie_dict['description']}}</p>
@@ -18,8 +18,8 @@
                     </div>
                 </a>
             </div>
+            <br>
         </div>
-        <hr>
     {% endfor %}     
     </div>
 </div>

@@ -4,18 +4,18 @@
 <br>
 <div class="container">
    <div class="jumbotron">
-      <div class="card flex-row flex-wrap" style="height: 54vw;">
+      <div class="card flex-row flex-wrap movie-details-card">
          <div class="card-header border-0">
-             <img src="{{poster}}" alt="" style="height: 50vw;">
+             <img class="movie-details-poster" src="{{poster}}" alt="">
          </div>
-         <div class="card-block px-2" style="width: 36vw;">
+         <div class="card-block px-2 movie-details-block">
             <br>
-            <h4 class="card-title text-center"><b>{{title}}</b></h4>
+            <h4 class="card-title text-center main-movie-card-title"><b>{{title}}</b></h4>
             <hr>
-            <div class="card-text ratings-text" style="width: 22vw;">
+            <div class="card-text ratings-text-div movie-card-ratings-div">
                {% for reviewer,rating in ratings.items() %}
                <div class="row">
-                  <h5 class="movie-ratings">{{reviewer}}: <b class="rating-value">{{rating}}</b></h5>
+                  <h5 class="movie-ratings ratings-text">{{reviewer}}: <b class="rating-value">{{rating}}</b></h5>
                </div>
                <br>
                {% endfor %}
@@ -41,7 +41,7 @@
          </div>
       </div>
       <hr>
-      <h5 class="text-center"><b>Plot</b></h5>
+      <h5 class="text-center plot-tite"><b>Plot</b></h5>
       <div class="container">
          <p>{{plot}}</p>
       </div>
@@ -50,15 +50,15 @@
 <hr>
 <div class="container">
    <div class="jumbotron">
-      <h1 class="display-5">Cast</h1>
+      <h1 class="display-5 cast-title">Cast</h1>
       {% for actor in actors %}
-      <div class="card flex-row flex-wrap" style="height: 12rem;">
+      <div class="card flex-row flex-wrap actors-card">
          <div class="card-header border-0">
-             <img src="{{actor['image']}}" alt="" style="height: 10.5rem;">
+             <img class="actors-card-image" src="{{actor['image']}}" alt="">
          </div>
          <div class="card-block px-2">
             <br>
-            <h5 class="card-title">{{actor['name']}} <small>as {{actor['asCharacter']}}</small> </h5>
+            <h5 class="card-title actor-names">{{actor['name']}} <small>as {{actor['asCharacter']}}</small> </h5>
             <p class="card-text"> <a href="https://en.wikipedia.org/wiki/{{ actor['name'] }}">More about {{actor['name']}}</a> </p>
          </div>
       </div>
@@ -69,7 +69,7 @@
 
 <div class="container">
    <div class="jumbotron">
-      <h1 class="display-5">Directors</h1>
+      <h1 class="display-5 directors-title">Directors</h1>
       {% for director in directors['items'] %}
       <div class="card">
          <img class="card-img-top" src="" alt="">

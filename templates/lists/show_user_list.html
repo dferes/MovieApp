@@ -4,15 +4,15 @@
 <br>
 <div class="container">
    <div class="jumbotron-fluid">
-      <div class="card flex-row flex-wrap" style="height: 20vw;">
+      <div class="card flex-row flex-wrap movie-list-main-card">
          <div class="card-header border-0">
-            <img src="{{movie_list.list_image_url}}" alt="" style="height: 18vw; max-width: 30vw;">
+            <img class="movie-list-main-card-image" src="{{movie_list.list_image_url}}" alt="">
          </div>
          <div class="card-block px-2">
             <br>
             <div class="row movie-list-card">
                <h5 class="user-list-movie-title">{{movie_list.title}} 
-                  <small>@{{user.username}}</small>
+                  <small><a href="/users/{{user.id}}">@{{user.username}}</a></small>
                </h5>
                {% if this_user.id == user.id %}
                <div class="col list-card-button-area">
@@ -30,7 +30,7 @@
            </div>
             <hr>
             <div class="container">
-               <p class="card-text" style="width: 42vw;">{{movie_list.description}}</p>
+               <p class="card-text movie-list-description">{{movie_list.description}}</p>
             </div>
          </div>
       </div>
@@ -40,13 +40,13 @@
 <div class="container">
    <div class="jumbotron">
       {% for movie in movie_list.movies %}
-      <div class="card flex-row flex-wrap" style="height: 12rem;">
+      <div class="card flex-row flex-wrap movie-list-movie-card">
          <div class="card-header border-0">
             <a href="/show-movie-details/{{movie.IMDB_id}}">
-               <img src="{{movie.poster_url}}" alt="" style="height: 10.5rem;">
+               <img class="movie-list-movie-image" src="{{movie.poster_url}}" alt="">
             </a>
          </div>
-         <div class="card-block px-2">
+         <div class="card-block px-2 movie-list-movie-card-block">
             <br>
             <a href="/show-movie-details/{{movie.IMDB_id}}">
                <h5 class="card-title">{{movie.name}}</h5>
@@ -84,7 +84,7 @@
                <li class="list-group-item">
                   <img src="{{ this_user.user_pic_url }}" alt="" class="timeline-image">
                   <div class="comment-box-container">
-                     <input required="true" type="text" name="comment-text" class="comment-box", placeholder="Add a public comment..."></input>
+                     <input type="text" name="comment-text" class="comment-box", placeholder="Add a public comment..."></input>
                      <div class="comment-box-button-container">
                         <button class="btn btn-sm btn-outline-primary comment-submit-button">Comment</button>   
                         <button class="btn btn-sm btn-outline-danger comment-cancel-button">Cancel</button>
@@ -103,8 +103,8 @@
                         <img src="{{ movie_list.comments[loop.revindex0].user.user_pic_url }}" alt="" class="timeline-image">
                      </a>
                      <div class="message-area">
-                        <a href="/users/{{ movie_list.comments[loop.revindex0].user.id }}">@{{ comment.user.username }}</a>
-                        <span class="text-muted">{{ movie_list.comments[loop.revindex0].timestamp.strftime('%d %B %Y') }}</span>
+                        <a href="/users/{{ movie_list.comments[loop.revindex0].user.id }}">@{{ movie_list.comments[loop.revindex0].user.username }}</a>
+                        <span class="text-muted">{{ movie_list.comments[loop.revindex0].timestamp.strftime('%d %B %Y,  %H:%M') }}</span>
                         <p>{{ movie_list.comments[loop.revindex0].content }}</p>
                      </div>
                   </li>

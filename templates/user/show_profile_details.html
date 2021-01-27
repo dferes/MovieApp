@@ -14,19 +14,19 @@
             {% if this_user.id != user.id %}
               {% set list_link_name = 'Lists' %}
             {% endif %}
-            <p class="small">{{list_link_name}}</p>
+            <p class="small"><a href="/users/{{ user.id }}/show-lists"">{{list_link_name}}</a></p>
             <h4>
               <a href="/users/{{ user.id }}/show-lists">{{ user.lists | length }}</a>
             </h4>
           </li>
           <li class="stat">
-            <p class="small">Following</p>
+            <p class="small"><a href="/users/{{ user.id }}/following">Following</a></p>
             <h4>
               <a href="/users/{{ user.id }}/following">{{ user.following | length }}</a>
             </h4>
           </li>
           <li class="stat">
-            <p class="small">Followers</p>
+            <p class="small"><a href="/users/{{ user.id }}/followers">Followers</a></p>
             <h4>
               <a href="/users/{{ user.id }}/followers">{{ user.followers | length }}</a>
             </h4>

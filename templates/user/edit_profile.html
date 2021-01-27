@@ -3,7 +3,7 @@
 <div class="form-container">
     <div class="row justify-content-md-center">
         <div class="col-md-5">
-          <h2 class="text-center">Make some updates</h2>
+          <h2 class="text-center edit-message">Make some updates</h2>
           <form method="POST" id="user_form">
             {{ form.hidden_tag() }}
     
@@ -27,7 +27,7 @@
             <br>
     
             <div class="edit-btn-area">
-              <button class="btn btn-success">Edit this user!</button>
+              <button class="btn btn-outline-success">Edit this user!</button>
               <a href="/users/{{ this_user.id }}" class="btn btn-outline-danger">Cancel</a>
             </div>
           </form>
