@@ -80,7 +80,7 @@
    <div class="jumbotron">
       <div class="row">
          <div class="col col-sm-12">
-            <ul class="list-group comment-list" id="messages">
+            <ul class="list-group comment-list messages">
                <li class="list-group-item">
                   <img src="{{ this_user.user_pic_url }}" alt="" class="timeline-image">
                   <div class="comment-box-container">
@@ -96,7 +96,7 @@
                <input type="hidden" class="user-pic-url" name="user-pic-url" value="{{this_user.user_pic_url}}">
                <input type="hidden" class="username" name="username" value="{{this_user.username}}">
                <input type="hidden" class="movie_list_id" name="movie_list_id" value="{{movie_list.id}}">
-            <ul class="list-group comment-list comment-list-body" id="messages">
+            <ul class="list-group comment-list comment-list-body messages">
                {% for comment in movie_list.comments %}
                   <li class="list-group-item">
                      <a href="/users/{{ movie_list.comments[loop.revindex0].user_id }}">
