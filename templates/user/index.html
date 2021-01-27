@@ -1,0 +1,42 @@
+{% extends 'user/show_profile_details.html' %}
+{% block title %}Find Movie Buddies!{% endblock %}
+{% block user_details %}
+
+{% if users|length == 0 %}
+<h3>Sorry, no users found</h3>
+{% else %}
+<div class="col-sm-9">
+    <div class="row">
+        {% for user_ in users %}
+            {% if this_user.id != user_.id %}
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="card user-card">
+                    <div class="card-inner">
+                        <div class="image-wrapper">
+                            <img src="{{ user_.header_image_url }}" alt="" class="card-hero">
+                        </div>
+                        <div class="card-contents">
+                            <a href="/users/{{ user_.id }}" class="card-link">
+                                <img src="{{ user_.user_pic_url }}" alt="Image for {{ user_.username }}" class="card-image">
+                                <p>@{{ user_.username }}</p>
+                            </a>
+                            {% if is_following(this_user, user_) %}
+                            <form method="POST" action="/users/stop-following/{{ user_.id }}">
+                                <button class="btn btn-primary btn-sm">Unfollow</button>
+                            </form>
+                            {% else %}
+                            <form method="POST" action="/users/follow/{{ user_.id }}">
+                                <button class="btn btn-outline-primary btn-sm">Follow</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        <p class="card-bio">{{user_.bio}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
