@@ -133,6 +133,14 @@ def show_user_profile(id):
     user, this_user = retrieve_users(id)
     return render_template('user/show_profile_details.html', user=user, this_user=this_user)
 
+@app.route('/users/find')
+def find_new_friends():
+    this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
+    user = this_user
+    search = request.args.get('friend-query')
+    users = User.query.filter(User.username.like(f"%{search}%")).all() if search else User.query.all() 
+
+    return render_template('user/index.html', users=users, user=user, this_user=this_user, is_following=is_following)
 
 @app.route('/users/<int:id>/show-lists', methods=['GET'])
 def show_user_lists(id):
