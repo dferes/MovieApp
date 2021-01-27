@@ -1,7 +1,35 @@
+body {
+    background-color: #15181a;
+}
+
+.jumbotron {
+    background-color: #22282b;
+}
+
+.jumbotron-fluid {
+    background-color: #22282b;
+}
+
+.card {
+    background-color: #15181a;
+}
+
+h1, h2, h3, h4, h5, p, small {
+    color: white;
+}
+
+hr {
+    background-color: #657786;
+}
+
+.list-group-item {
+    background-color: #15181a;
+}
+
 .navbar {
     background-color: rgb(0, 0, 0);
-    height: 46px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    height: 2.8em;
+    border-bottom: 0.125em solid rgba(0, 0, 0, 0.25);
     margin-bottom: 1rem;
     position: relative;
     z-index: 9999;
@@ -9,7 +37,7 @@
   
 .navbar a {
     color: #66757f;
-    font-size: 13px;
+    font-size: 0.85em;
     font-weight: bold;
 }
   
@@ -24,15 +52,15 @@
   
 .navbar-brand > img {
     display: inline-block;
-    margin-bottom: 2px;
-    margin-right: 5px;
-    width: 20px;
-    border-radius: 2px;
+    margin-bottom: 0.1em;
+    margin-right: 0.4em;
+    width: 2.25em;
+    border-radius: 0.1em;
 }
   
 .nav > li > a > img {
-    width: 32px;
-    border-radius: 32px;
+    width: 2.25em;
+    border-radius: 2.25em;
 }
   
 ul.nav.navbar-nav {
@@ -50,19 +78,21 @@ nav form.navbar-form {
 }
   
 #search.form-control {
-    border-radius: 20px;
+    border-radius: 2em;
     margin-bottom: 0;
     width: 100%;
-    font-size: 13px;
-    padding-right: 28px;
+    background-color:#15181a;
+    color: white;
+    font-size: 0.825em;
+    padding-right: 2.8em;
     box-sizing: border-box;
 }
   
 #search.form-control + .btn {
     position: absolute;
-    right: 9px;
-    top: 2px;
-    bottom: 4px;
+    right: 0.55em;
+    top: 0.1em;
+    bottom: 0.1em;
     z-index: 1;
     padding: 0;
     color: #66757f;
@@ -76,47 +106,7 @@ nav form.navbar-form {
 #search:active,
 #search:focus {
     box-shadow: none;
-    border: 2px solid #007bff;
-}
-  
-/* TODO: on onboarding pages (signup & login), the navbar will be different: 
-    . the logo will be centered 
-    . it will have a background color
-    . no search bar
-*/
-  
-.onboarding > .navbar {
-    background-image: url("/static/images/nav-bg.png");
-    background-size: 100% 100%;
-}
-  
-.onboarding .navbar-header {
-    margin: 0 auto;
-}
-  
-.onboarding .navbar-brand {
-    margin: 0;
-}
-  
-.onboarding .navbar-brand span {
-    display: none;
-}
-  
-.onboarding .nav.navbar-nav.navbar-right {
-    position: absolute;
-    right: 16px;
-}
-  
-.onboarding > .navbar a {
-    color: #fff;
-}
-  
-.onboarding > .navbar form.navbar-form {
-    display: none;
-}
-  
-.onboarding {
-    background-color: #fff;
+    border: 0.1em solid #007bff;
 }
   
 @media (max-width: 468px) {
@@ -146,7 +136,7 @@ nav + .container {
     color: rgb(10, 5, 5);
     text-align: center;
     padding: 1rem;
-    text-shadow: 0 0 8px #030608;
+    text-shadow: 0 0 0.4em #030608;
     /* play around with the colors and opacity....looks terrible */
 }
   
@@ -154,7 +144,7 @@ nav + .container {
     text-shadow: none;
     position: relative;
     z-index: 1;
-    width: 150px;
+    width: 10em;
 }
   
 .home-hero h1 {
@@ -172,14 +162,22 @@ nav + .container {
 }
 
 .btn {
-    border-radius: 50px;
+    border-radius: 2.5em;
 }
 
 #user_form input.form-control {
-    font-size: 18px;
+    font-size: 1em;
     font-weight: bold;
-    padding: 12px;
-  }
+    padding: 0.8em;
+    background-color: #030608;
+}
+
+#user_form textarea.form-control {
+    font-size: 1em;
+    font-weight: bold;
+    padding: 0.8em;
+    background-color: #030608;
+}
 
 .form-container {
     margin-top: 7rem;
@@ -202,13 +200,13 @@ nav + .container {
 }
 
 .row.full-width {
-    background-color: #fff;
-    margin-top: -80px;
+    background-color: #090a0b;
+    margin-top: -5em;
     margin-bottom: 1rem;
-    border-bottom: 1px solid #ccc;
-    border-top: 1px solid #ccc;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
-    height: 60px;
+    border-bottom: 0.05em solid #ccc;
+    border-top: 0.05em solid #ccc;
+    box-shadow: 0 0.05em 0.1em 0 rgba(0, 0, 0, 0.25);
+    height: 3.7em;
     align-items: center;
 }
 
@@ -218,30 +216,30 @@ nav + .container {
 }
   
 .user-stats > .ml-auto .btn {
-    min-width: 105px;
-    padding: 6px 16px;
+    min-width: 7em;
+    padding: 0.4em 1.2em;
 }
   
 .stat {
     text-align: center;
-    height: 60px;
+    height: 3.5em;
     box-sizing: border-box;
-    padding: 14px 15px 7px;
+    padding: 0.65em 1.1em 0.5em;
     line-height: 1;
 }
   
 .stat > .small {
     color: #657786;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 0.8em;
     letter-spacing: 0.02em;
     margin-bottom: 0;
 }
   
 .stat > .small + h4 {
-    font-size: 18px;
+    font-size: 1.1em;
     font-weight: bold;
-    padding-top: 3px;
+    padding-top: 0.16em;
 }
 
 @media (max-width: 768px) {
@@ -251,19 +249,19 @@ nav + .container {
 }
 
 .profile-avatar {
-    width: 200px;
-    height: 200px;
-    border: 5px solid #fff;
-    margin-top: -120px;
+    width: 15em;
+    height: 15em;
+    border: 0.3em solid rgb(166, 175, 177);
+    margin-top: -10em;
     z-index: 1;
     position: relative;
-    box-shadow: 0 1px 1px rgba(136, 153, 166, 0.15);
+    box-shadow: 0 0.01em 0.01em rgba(136, 153, 166, 0.15);
 }
 
 .profile-avatar {
   border-radius: 100%;
   display: block;
-  margin-left: -15px;
+  margin-left: -1.5em;
 }
 
 .sidebar-username {
@@ -272,6 +270,7 @@ nav + .container {
     font-weight: bold;
     line-height: 1.5rem;
     word-wrap: break-word;
+    color: #b3babe;
 }
 
 .edit-btn-area {
@@ -283,32 +282,31 @@ nav + .container {
     width: 48%;
 }
 
-
-
 .user-card {
     width: 100%;
     padding-bottom: 100%;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    border-radius: 0.1em;
+    border: 0.05em solid #ccc;
     position: relative;
-    background: white;
-    margin-top: 20px;
+    background: #090a0b;
+    margin-top: 2em;
 }
   
 .user-card > div {
     position: absolute;
-    background: white;
+    background: #090a0b;
 }
   
 .user-card form {
-    margin-top: 5px;
-    margin-right: 5px;
+    margin-top: 0.16em;
+    margin-right: 0.16em;
 }
   
 .user-card form .btn {
-    min-width: 89px;
-    padding: 4px 12px;
-    font-size: 12px;
+    min-width: 7em;
+    padding: 0.11em 0.1em;
+    font-size: 0.85em;
+    margin-right: 1em;
 }
 
 .card-inner {
@@ -322,6 +320,7 @@ nav + .container {
     padding-bottom: 36%;
     position: relative;
     overflow: hidden;
+    background-color: #090a0b;
 }
 
 .card-hero {
@@ -340,25 +339,26 @@ nav + .container {
 
 .card-link {
     display: inline-block;
-    margin-left: 10px;
+    margin-left: 1em;
 }
   
 .card-link > p {
     position: absolute;
+    color: #007bff;
 }
 
 .card-image {
-    border: 3px solid #fff;
-    border-radius: 70px;
-    height: 70px;
-    width: 70px;
-    margin-top: -35px;
+    border: 0.1em solid rgb(100, 111, 114);
+    border-radius: 4.4em;
+    height: 4.4em;
+    width: 4.4em;
+    margin-top: -4.6em;
     position: relative;
     z-index: 1;
 }
 
 p.card-bio {
-    margin: 2em 10px 0;
+    margin: 2em 1.8em 0;
 }
 
 .user-lists-card-text {
@@ -389,7 +389,7 @@ p.card-bio {
     right: 20%;  
 }
 
-.ratings-text {
+.ratings-text-div {
     position: absolute;
     right: 10%;  
 }
@@ -402,7 +402,7 @@ p.card-bio {
 
 .movie-remove-button-div {
     position: absolute;
-    right: 5%;
+    right: 2%;
     bottom: 5%;
 }
 
@@ -413,8 +413,13 @@ p.card-bio {
     text-overflow: ellipsis;
 }
 
+.plot-tite, .cast-title, .query-results-text, .ratings-text {
+    color: white;
+}
+
 .user-list-movie-title {
     margin-left: 23%;
+    color: white;
 }
 
 #messages .list-group-item a:not(.message-link) {
@@ -425,11 +430,13 @@ p.card-bio {
 #messages .list-group-item {
     display: flex;
     align-items: flex-start;
-    padding: 7px 20px 12px;
+    padding: .5em 1.25em 0.3em;
+    margin-bottom: 0.2em;
+    border-radius: 0.75em;
 }
   
 #messages:not(.no-hover) .list-group-item:hover {
-    background-color: #e6ecf0;
+    background-color: #111316;
 }
 
 .message-area,
@@ -441,11 +448,11 @@ p.card-bio {
     border-radius: 3.25em;
     height: 3.25em;
     width: 3.25em;
-    margin-top: 2px;
+    margin-top: 0.2em;
 }
 
 .message-area {
-  margin-left: 10px;
+  margin-left: 1em;
 }
 
 #messages.no-hover .message-area {
@@ -461,6 +468,12 @@ p.card-bio {
     width: 66vw;
     margin-top: 0.875em;
     border-radius: 2rem;
+    background-color: #22282b;
+
+    font-size: 1.05em;
+    color: white;
+    padding-left: 1em;
+    box-sizing: border-box
 }
 
 .comment-box-button-container {
@@ -472,3 +485,81 @@ p.card-bio {
 .comment-cancel-button {
     margin-left: 1em;
 }
+
+.movie-list-main-card {
+    height: 20vw;
+    background-color: #22282b;
+}
+
+.movie-list-main-card-image {
+    height: 18vw; 
+    max-width: 30vw;
+}
+
+.movie-list-description {
+    width: 42vw;
+}
+
+.movie-list-movie-card {
+    height: 12rem;
+}
+
+.movie-list-movie-card-block {
+    width: 61vw;
+}
+
+.movie-list-movie-image {
+    height: 10.5rem;
+}
+
+.query-result-card {
+    width: 18rem;
+    background-color: #000001;
+}
+
+.query-results-poster {
+    height: 28em;
+}
+
+.a-movie-list-card {
+    height: 10rem; 
+    width: 75vw;
+}
+
+.a-movie-list-card-image {
+    height: 8.5rem; 
+    max-width:20vw;
+}
+
+.a-movie-card-block {
+    width: 50vw;
+}
+
+.movie-details-card {
+    height: 54vw;
+}
+
+.movie-details-poster {
+    height: 50vw;
+}
+
+.movie-details-block {
+    width: 36vw;
+}
+
+.movie-card-ratings-div {
+    width: 22vw;
+}
+
+.actors-card {
+    height: 10rem;
+}
+
+.actors-card-image {
+    height: 8.5rem;
+}
+
+.join-message, .edit-message, .main-movie-card-title, .cast-title, .directors-title, .actor-names {
+    color: white;
+}
+
