@@ -14,7 +14,7 @@ body {
     background-color: #15181a;
 }
 
-h1, h2, h3, h4, h5, p, small {
+h1, h2, h3, h4, p, small {
     color: white;
 }
 
@@ -77,10 +77,9 @@ nav form.navbar-form {
     position: relative;
 }
   
-#search.form-control {
+.search.form-control {
     border-radius: 2em;
     margin-bottom: 0;
-    width: 100%;
     background-color:#15181a;
     color: white;
     font-size: 0.825em;
@@ -88,23 +87,47 @@ nav form.navbar-form {
     box-sizing: border-box;
 }
   
-#search.form-control + .btn {
+.movie-search {
+    width: 100%;
+}
+
+.friend-search{
+    width: 65%;
+    margin-left: 3.5em;;
+}
+
+.friend-search-li {
+    text-align: center;
+    height: 3.5em;
+    box-sizing: border-box;
+    padding: 0.65em 1.1em 0.5em;
+    line-height: 1;
+}
+
+.search.form-control + .btn {
     position: absolute;
-    right: 0.55em;
     top: 0.1em;
     bottom: 0.1em;
     z-index: 1;
     padding: 0;
-    color: #66757f;
+    color: #9520e2;
+}
+
+.friend-search.form-control + .btn {
+    right: 20.35em;
+}
+
+.movie-search.form-control + .btn {
+    right: 0.55em;
 }
   
-#search.form-control + .btn:active,
-#search.form-control + .btn:focus {
+.search.form-control + .btn:active,
+.search.form-control + .btn:focus {
     box-shadow: none;
 }
   
-#search:active,
-#search:focus {
+.search:active,
+.search:focus {
     box-shadow: none;
     border: 0.1em solid #007bff;
 }
@@ -165,14 +188,14 @@ nav + .container {
     border-radius: 2.5em;
 }
 
-#user_form input.form-control {
+.user_form input.form-control {
     font-size: 1em;
     font-weight: bold;
     padding: 0.8em;
     background-color: #030608;
 }
 
-#user_form textarea.form-control {
+.user_form textarea.form-control {
     font-size: 1em;
     font-weight: bold;
     padding: 0.8em;
@@ -216,8 +239,8 @@ nav + .container {
 }
   
 .user-stats > .ml-auto .btn {
-    min-width: 7em;
-    padding: 0.4em 1.2em;
+    min-width: 6em;
+    padding: 0.2em 0.5em;
 }
   
 .stat {
@@ -422,12 +445,12 @@ p.card-bio {
     color: white;
 }
 
-#messages .list-group-item a:not(.message-link) {
+.messages .list-group-item a:not(.message-link) {
     position: relative;
     z-index: 2;
 }
   
-#messages .list-group-item {
+.messages .list-group-item {
     display: flex;
     align-items: flex-start;
     padding: .5em 1.25em 0.3em;
@@ -435,7 +458,7 @@ p.card-bio {
     border-radius: 0.75em;
 }
   
-#messages:not(.no-hover) .list-group-item:hover {
+.messages:not(.no-hover) .list-group-item:hover {
     background-color: #111316;
 }
 
@@ -455,7 +478,7 @@ p.card-bio {
   margin-left: 1em;
 }
 
-#messages.no-hover .message-area {
+.messages.no-hover .message-area {
     width: 100%;
 }
 
@@ -524,6 +547,10 @@ p.card-bio {
 .a-movie-list-card {
     height: 10rem; 
     width: 75vw;
+}
+
+.a-movie-list-card-title {
+    color: #007bff;
 }
 
 .a-movie-list-card-image {
