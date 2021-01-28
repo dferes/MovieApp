@@ -13,6 +13,7 @@ wikipedia_url = f"https://imdb-api.com/en/API/Wikipedia/{api_key}"
 poster_url = f"https://imdb-api.com/en/API/Posters/{api_key}"
 ratings_url = f"https://imdb-api.com/en/API/Ratings/{api_key}"
 actors_url = f"https://imdb-api.com/en/API/Name/{api_key}"
+movie_url = f"https://imdb-api.com/en/API/Title/{api_key}"
 
 URL_DICTIONARY = {
     'base': base_url, 
@@ -20,7 +21,9 @@ URL_DICTIONARY = {
     'wiki' : wikipedia_url, 
     'poster': poster_url, 
     'ratings': ratings_url,
-    'actors': actors_url}
+    'actors': actors_url,
+    'movies': movie_url
+    }
 
 
 def collect_ratings(ratings_response):
