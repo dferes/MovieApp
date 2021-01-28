@@ -2,12 +2,12 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, User, MovieList, Movie, Comment
-from secret_key import key
 import requests
 import json
-from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, NewUserCommentForm, EditListForm
+from config import URL_DICTIONARY, key
+from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, EditListForm
 from user_functions import authenticate, is_following
-from utility_functions import retrieve_movie_details, URL_DICTIONARY, prepopulate_edit_list_form, update_movie_list_data, validate_and_edit_profile
+from utility_functions import retrieve_movie_details, prepopulate_edit_list_form, update_movie_list_data, validate_and_edit_profile
 from utility_functions import add_movie_to_list, validate_and_signup, validate_and_create_movie_list, pre_populate_user_edit_form_fields
 from recommendation_functions import UserMovieRecommendations
 
@@ -131,7 +131,7 @@ def show_movie_details(imDb_id):
 @app.route('/users/<int:id>')
 def show_user_profile(id):
     user, this_user = retrieve_users(id)
-    recs = UserMovieRecommendations(this_user.actors).collect_recommended_movies(10,3) if this_user==user else None
+    recs = UserMovieRecommendations(this_user.actors).collect_recommended_movies(8,2) if this_user==user else None
 
     return render_template('user/show_profile_details.html', user=user, this_user=this_user, recs=recs)
 
@@ -282,8 +282,9 @@ def add_movie_to_list_form(movie_list_id, imDb_id):
 @app.route('/users/lists/movies/<int:movie_id>/remove', methods=['GET', 'DELETE'])
 def remove_movie_from_list(movie_id):
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    movie = Movie.query.get_or_404(movie_id)
-   
+    # movie = Movie.query.filter_by(IMDB_id=movie_list_id, id=movie_id)
+    movie = Movie.query.get(movie_id)
+
     db.session.delete(movie)
     db.session.commit()
     
