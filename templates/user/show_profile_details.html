@@ -76,7 +76,7 @@
   {% block user_details %}
   {% endblock %}
 
-  {% if recs != None %}
+  {% if this_user.id == user.id and recs != null and recs != None%}
   <div class="container">
     <div class="jumbotron recommendation-jumbotron">
       <h2 class="text-center recommendation-title"><b>Based On Your Lists</b></h2>
