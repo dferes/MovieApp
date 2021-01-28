@@ -9,7 +9,7 @@ from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, NewUser
 from user_functions import authenticate, is_following
 from utility_functions import retrieve_movie_details, URL_DICTIONARY, prepopulate_edit_list_form, update_movie_list_data, validate_and_edit_profile
 from utility_functions import add_movie_to_list, validate_and_signup, validate_and_create_movie_list, pre_populate_user_edit_form_fields
-
+from recommendation_functions import UserMovieRecommendations
 
 app = Flask(__name__)
 
@@ -105,7 +105,7 @@ def logout():
 def get_move_by_query():
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     title = request.args.get('q')
-    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/base/{title}") # Only works locally 
+    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/base/{title}")
     res = json.loads(res.text)['results']
 
     return render_template('search/show-query-results.html', res=res, query=title, this_user=this_user)
@@ -272,7 +272,7 @@ def edit_user_list(list_id):
 @app.route('/users/lists/<int:movie_list_id>/add-movie/<string:imDb_id>', methods=['GET', 'POST'])
 def add_movie_to_list_form(movie_list_id, imDb_id):
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
-    add_movie_to_list(movie_list_id, imDb_id)
+    add_movie_to_list(movie_list_id, imDb_id, this_user)
     
     return redirect(f"/users/{this_user.id}/lists/{movie_list_id}/details")
 
