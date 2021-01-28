@@ -603,3 +603,12 @@ p.card-bio {
     background-color: #1f3946;
     color: white;
 }
+
+.recommendation-title {
+    margin-bottom: 1em;
+}
+
+.recommendation-jumbotron {
+    padding-top: 1em;
+    border-radius: 3em;
+}
