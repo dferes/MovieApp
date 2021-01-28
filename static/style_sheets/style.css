@@ -590,3 +590,16 @@ p.card-bio {
     color: white;
 }
 
+.dropdown-menu {
+    background-color: #22282b;
+}
+
+.dropdown-menu a{
+    background-color: #22282b;
+    color: white;
+}
+
+.dropdown-menu a:hover {
+    background-color: #1f3946;
+    color: white;
+}
