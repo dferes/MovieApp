@@ -35,14 +35,16 @@ class UserMovieRecommendations():
 
         for actor_object in self.random_actors:
             movie_ids = self.retrieve_list_of_imdb_movie_ids_based_on_actor(actor_object.imdb_id) 
-            self.suggested_movie_ids.append(random.sample(movie_ids, n_movie_recommendations_ids) )
+            self.suggested_movie_ids.append(movie_ids[2:n_movie_recommendations_ids+2])
 
-    def make_movie_dict(self, movie_res):
+    def make_movie_dict(self, movie_res, wiki_res):
+        plot = wiki_res['plotShort']['plainText']
+        plot_text = plot if plot not in [None, ''] else movie_res['plot']
         movie = {
             'imdb_id': movie_res['id'],
             'name': movie_res['fullTitle'],
             'poster_url': movie_res['image'],
-            'plot': movie_res['plot']
+            'plot': plot_text
         }
         return movie
 
@@ -52,8 +54,10 @@ class UserMovieRecommendations():
         self.collect_recommended_movie_ids(num_actors, num_movies_per_actor)
         for movie_id_list in self.suggested_movie_ids:
             for movie_id in movie_id_list:
+                wiki_res = requests.get(f"{URL_DICTIONARY['wiki']}/{movie_id}").text
+                wiki_res = json.loads(wiki_res)
                 movie_res = requests.get(f"{URL_DICTIONARY['movies']}/{movie_id}").text 
                 movie_res = json.loads(movie_res)
-                recommended_movies.append(self.make_movie_dict(movie_res))
+                recommended_movies.append(self.make_movie_dict(movie_res, wiki_res))
 
         return recommended_movies
