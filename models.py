@@ -39,6 +39,7 @@ class User(db.Model):
     
     lists = db.relationship('MovieList', backref='owning_user')
     comments = db.relationship('Comment')
+    actors = db.relationship('Actor', backref='list_owner')
 
 
 class MovieList(db.Model):
@@ -60,7 +61,7 @@ class Movie(db.Model):
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     IMDB_id = db.Column(db.Text, primary_key=True)
-    list_id = db.Column(db.Integer, db.ForeignKey('movie_lists.id', ondelete='cascade'), nullable=False) # double check the use of cascade here
+    list_id = db.Column(db.Integer, db.ForeignKey('movie_lists.id', ondelete='cascade'), nullable=False)
     name = db.Column(db.Text, nullable=False)
     poster_url = db.Column(db.Text, nullable=False)
     plot = db.Column(db.Text, nullable=False)
@@ -75,3 +76,12 @@ class Comment(db.Model):
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     user = db.relationship('User')
+
+
+class Actor(db.Model):
+    __tablename__ = 'actors'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    imdb_id = db.Column(db.Text, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), nullable=False)
+    name = db.Column(db.Text, nullable=False)
