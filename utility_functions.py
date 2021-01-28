@@ -1,7 +1,7 @@
 import requests
 import json
 from api_key import api_key
-from models import db, Movie, MovieList, User
+from models import db, Movie, MovieList, User, Actor
 from sqlalchemy.exc import IntegrityError
 from user_functions import signup, authenticate
 
@@ -12,8 +12,15 @@ cast_url = f"https://imdb-api.com/en/API/FullCast/{api_key}"
 wikipedia_url = f"https://imdb-api.com/en/API/Wikipedia/{api_key}"
 poster_url = f"https://imdb-api.com/en/API/Posters/{api_key}"
 ratings_url = f"https://imdb-api.com/en/API/Ratings/{api_key}"
+actors_url = f"https://imdb-api.com/en/API/Name/{api_key}"
 
-URL_DICTIONARY = {'base': base_url, 'cast': cast_url, 'wiki' : wikipedia_url, 'poster': poster_url, 'ratings': ratings_url}
+URL_DICTIONARY = {
+    'base': base_url, 
+    'cast': cast_url, 
+    'wiki' : wikipedia_url, 
+    'poster': poster_url, 
+    'ratings': ratings_url,
+    'actors': actors_url}
 
 
 def collect_ratings(ratings_response):
@@ -25,10 +32,10 @@ def collect_ratings(ratings_response):
 
 
 def retrieve_movie_details(imDb_id):
-    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/cast/{imDb_id}") # Only works locally
+    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/cast/{imDb_id}")
     res = json.loads(res.text)
 
-    wiki_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/wiki/{imDb_id}") # only works locally
+    wiki_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/wiki/{imDb_id}")
     wiki_response = json.loads(wiki_response.text)
     
     poster_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/poster/{imDb_id}")
@@ -76,7 +83,7 @@ def prepopulate_edit_list_form(movie_list, form):
     movie_list.list_image_url = form.list_image_url.data if form.list_image_url.data else movie_list.list_image_url
 
 
-def add_movie_to_list(movie_list_id, imDb_id):
+def add_movie_to_list(movie_list_id, imDb_id, user_id):
     movie_details = retrieve_movie_details(imDb_id)
     movie_add = Movie(
         IMDB_id=imDb_id,
@@ -85,11 +92,31 @@ def add_movie_to_list(movie_list_id, imDb_id):
         poster_url=movie_details['poster'],
         plot=movie_details['plot']
     )
+
+    add_actors_to_user(movie_details['actors'], user_id)
     
     db.session.add(movie_add)
     db.session.commit()
     return
 
+def add_actors_to_user(movie_response_actors, user):
+    for actor_dict in movie_response_actors:
+        if not is_duplicate_actor_name(actor_dict['name'], user.actors):
+            db.session.add(
+                Actor(
+                    user_id=user.id,
+                    imdb_id=actor_dict['id'],
+                    name=actor_dict['name']
+                )
+            )
+    db.session.commit()
+    return
+
+def is_duplicate_actor_name(name, actors):
+    for actor in actors:
+        if name == actor.name:
+            return True
+    return False
 
 def validate_and_signup(form):
     if form.validate_on_submit():
