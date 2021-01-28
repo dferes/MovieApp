@@ -131,7 +131,9 @@ def show_movie_details(imDb_id):
 @app.route('/users/<int:id>')
 def show_user_profile(id):
     user, this_user = retrieve_users(id)
-    return render_template('user/show_profile_details.html', user=user, this_user=this_user)
+    recs = UserMovieRecommendations(this_user.actors).collect_recommended_movies(10,3) if this_user==user else None
+
+    return render_template('user/show_profile_details.html', user=user, this_user=this_user, recs=recs)
 
 @app.route('/users/find')
 def find_new_friends():
