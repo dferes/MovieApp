@@ -105,7 +105,7 @@ def logout():
 def get_move_by_query():
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     title = request.args.get('q')
-    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/base/{title}")
+    res = requests.get(f"{URL_DICTIONARY['local']}/base/{title}")
     res = json.loads(res.text)['results']
 
     return render_template('search/show-query-results.html', res=res, query=title, this_user=this_user)
