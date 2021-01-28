@@ -1,4 +1,4 @@
-from models import db, Follows, MovieList, Movie, Comment
+from models import db, Follows, MovieList, Movie, Comment, Actor
 from user_functions import signup
 
 db.drop_all()
@@ -244,4 +244,12 @@ comment9 = Comment(user_id=2, list_id=1, content='Spooky stuff there')
 
 
 db.session.add_all([comment9,comment8,comment7,comment6,comment5,comment4,comment3,comment2,comment1])
+db.session.commit()
+
+a1 = Actor(imdb_id="nm0005212", user_id=1, name='Ian McKellen')
+a2 = Actor(imdb_id="nm0293509", user_id=1, name='Martin Freeman')
+a3 = Actor(imdb_id="nm0035514", user_id=1, name='Richard Armitage')
+a4 = Actor(imdb_id="nm0832792", user_id=1, name='Ken Stott')
+
+db.session.add_all([a1,a2,a3,a4])
 db.session.commit()
