@@ -1,29 +1,9 @@
+from config import URL_DICTIONARY
 import requests
 import json
-from api_key import api_key
 from models import db, Movie, MovieList, User, Actor
 from sqlalchemy.exc import IntegrityError
 from user_functions import signup, authenticate
-
-
-# Note that you are limited to 100 API calls per day...
-base_url = f"https://imdb-api.com/en/API/Search/{api_key}"
-cast_url = f"https://imdb-api.com/en/API/FullCast/{api_key}"
-wikipedia_url = f"https://imdb-api.com/en/API/Wikipedia/{api_key}"
-poster_url = f"https://imdb-api.com/en/API/Posters/{api_key}"
-ratings_url = f"https://imdb-api.com/en/API/Ratings/{api_key}"
-actors_url = f"https://imdb-api.com/en/API/Name/{api_key}"
-movie_url = f"https://imdb-api.com/en/API/Title/{api_key}"
-
-URL_DICTIONARY = {
-    'base': base_url, 
-    'cast': cast_url, 
-    'wiki' : wikipedia_url, 
-    'poster': poster_url, 
-    'ratings': ratings_url,
-    'actors': actors_url,
-    'movies': movie_url
-    }
 
 
 def collect_ratings(ratings_response):
@@ -35,25 +15,28 @@ def collect_ratings(ratings_response):
 
 
 def retrieve_movie_details(imDb_id):
-    res = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/cast/{imDb_id}")
+    res = requests.get(f"{URL_DICTIONARY['local']}/cast/{imDb_id}")
     res = json.loads(res.text)
 
-    wiki_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/wiki/{imDb_id}")
+    wiki_response = requests.get(f"{URL_DICTIONARY['local']}/wiki/{imDb_id}")
     wiki_response = json.loads(wiki_response.text)
     
-    poster_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/poster/{imDb_id}")
-    poster_response = json.loads(poster_response.text)
-    
-    ratings_response = requests.get(f"http://127.0.0.1:5000/api/get-movie-details/ratings/{imDb_id}") 
+    ratings_response = requests.get(f"{URL_DICTIONARY['local']}/ratings/{imDb_id}") 
     ratings_response = json.loads(ratings_response.text)
     
+    movie_res = requests.get(f"{URL_DICTIONARY['local']}/movies/{imDb_id}")
+    movie_res = json.loads(movie_res.text)
+    
+    plot = wiki_response['plotShort']['plainText']
+    plot_text = plot if plot not in [None, ''] else movie_res['plot']
+
     return {'imDb_id': imDb_id,
             'title': res['fullTitle'],         
             'directors':res['directors'], 
             'writers':res['writers'],
             'actors':res['actors'][:12],
-            'plot':wiki_response['plotShort']['plainText'],
-            'poster':poster_response['posters'][0]['link'],
+            'plot':plot_text,
+            'poster':movie_res['image'],
             'ratings':collect_ratings(ratings_response)
             }
     
