@@ -31,7 +31,7 @@
               <a href="/users/{{ user.id }}/followers">{{ user.followers | length }}</a>
             </h4>
           </li>
-
+          {% if this_user == user %}
           <li class="friend-search-li">
             <div class="friend-search-box">
               <form class="navbar-form navbar-right" action="/users/find">
@@ -42,6 +42,7 @@
               </form>
             </div>
           </li>
+          {% endif %}
           <div class="ml-auto">
           {% if session['current_user'] == user.id %}
             <a href="/users/{{user.id}}/edit-profile" class="btn btn-outline-secondary">Edit Profile</a>
@@ -75,8 +76,40 @@
   {% block user_details %}
   {% endblock %}
 
-  <!-- suggested movies and tv shows should go down here -->
-
+  {% if recs != None %}
+  <div class="container">
+    <div class="jumbotron recommendation-jumbotron">
+      <h2 class="text-center recommendation-title"><b>Based On Your Lists</b></h2>
+       {% for movie in recs %}
+       <div class="card flex-row flex-wrap movie-list-movie-card">
+          <div class="card-header border-0">
+             <a href="/show-movie-details/{{movie.imdb_id}}">
+                <img class="movie-list-movie-image" src="{{movie.poster_url}}" alt="">
+             </a>
+          </div>
+          <div class="card-block px-2 movie-list-movie-card-block">
+             <br>
+             <a href="/show-movie-details/{{movie.imdb_id}}">
+                <h5 class="card-title">{{movie.name}}</h5>
+             </a>
+             <br>
+             <p class="card-text list-card-movie-plot">
+                {{movie.plot}}
+             </p>
+             <hr>
+             {% if movie.name.endswith(')') %}
+                {% set title = movie.name[:movie.name.find('(')] %}
+             {% else %}
+                {% set title = movie.name %}
+             {% endif %}
+             <small><a href="https://wikipedia.com/wiki/{{title}}">More about {{title}}</a></small>
+          </div>
+       </div>
+       <hr>
+       {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 {% endblock %}
