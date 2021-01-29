@@ -4,7 +4,7 @@
     <div class="row justify-content-md-center">
         <div class="col-md-5">
           <h2 class="text-center edit-message">Make some updates</h2>
-          <form method="POST" class="user_form">
+          <form action="/users/{{this_user.id}}/edit-profile" method="POST" class="user_form">
             {{ form.hidden_tag() }}
     
             {% for field in form if field.widget.input_type != 'hidden' and field.name != 'password' %}
