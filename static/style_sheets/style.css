@@ -92,8 +92,8 @@ nav form.navbar-form {
 }
 
 .friend-search{
-    width: 65%;
-    margin-left: 3.5em;;
+    width: 55%;
+    margin-left: 3.75em;
 }
 
 .friend-search-li {
@@ -104,23 +104,29 @@ nav form.navbar-form {
     line-height: 1;
 }
 
-.search.form-control + .btn {
+.movie-search.form-control + .btn {
     position: absolute;
     top: 0.1em;
     bottom: 0.1em;
     z-index: 1;
     padding: 0;
+    right: 0.55em;
     color: #9520e2;
 }
 
-.friend-search.form-control + .btn {
-    right: 20.35em;
+.friend-search-box {
+    position: relative;
 }
 
-.movie-search.form-control + .btn {
-    right: 0.55em;
+.friend-search.form-control + .btn {
+    position: absolute;
+    top: 0.25em;
+    left: 10.9em;
+    z-index: 1;
+    padding: 0;
+    color: #9520e2;
 }
-  
+
 .search.form-control + .btn:active,
 .search.form-control + .btn:focus {
     box-shadow: none;
@@ -132,7 +138,7 @@ nav form.navbar-form {
     border: 0.1em solid #007bff;
 }
   
-@media (max-width: 468px) {
+@media (max-width: 30em) {
     nav form.navbar-form {
         display: none;
     }
@@ -237,9 +243,9 @@ nav + .container {
     display: flex;
     align-items: center;
 }
-  
+
 .user-stats > .ml-auto .btn {
-    min-width: 6em;
+    min-width: 6.5em;
     padding: 0.2em 0.5em;
 }
   
@@ -265,7 +271,7 @@ nav + .container {
     padding-top: 0.16em;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 968px) {
     .full-width .user-stats .stat {
       display: none;
     }
@@ -393,8 +399,10 @@ p.card-bio {
 
 .comments-number {
     position: absolute;
-    bottom: 10%;
-    right: 3.5%;
+    bottom: 25%;
+    right: 0;
+    padding-right: 1.5em;
+    padding-bottom: 1.5em;
 }
 
 .list-card-button-area {
@@ -546,7 +554,7 @@ p.card-bio {
 
 .a-movie-list-card {
     height: 10rem; 
-    width: 75vw;
+    width: 79vw;
 }
 
 .a-movie-list-card-title {
@@ -612,3 +620,4 @@ p.card-bio {
     padding-top: 1em;
     border-radius: 3em;
 }
+
