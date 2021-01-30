@@ -3,14 +3,16 @@
 {% block user_details %}
 <div class="jumbotron">
     {% for movie_list in user.lists %}
-    <div class="row">
-        <div class="col-md-9">
-            <div class="card flex-row flex-wrap a-movie-list-card">
+    <div class="card flex-row flex-wrap a-movie-list-card">
+        <div class="row">
+            <div class="col col-4">
                 <a href="/users/{{user.id}}/lists/{{movie_list.id}}/details">
                     <div class="card-header border-0">
                         <img class="a-movie-list-card-image" src="{{movie_list.list_image_url}}" alt="">
                     </div>
                 </a>
+            </div>
+            <div class="col col-6">
                 <div class="card-block px-2 a-movie-card-block">
                     <br>
                     <a href="/users/{{user.id}}/lists/{{movie_list.id}}/details">
@@ -23,23 +25,27 @@
                     <div class="row movie-list-card">
                         {% if this_user.id == user.id %}
                         <div class="col list-card-button-area">
-                            <div class="row"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <!-- # PUT/PATCH wont work here. Why? -->
-                                <form method="POST" action="/users/lists/{{movie_list.id}}/edit" class="form-inline">
-                                    <button class="btn btn-sm btn-outline-primary">Edit</button>&nbsp; &nbsp;
-                                </form>
-                                <form method="DELETE" action="/users/lists/{{movie_list.id}}/delete" class="form-inline">
-                                    <button class="btn btn-sm btn-outline-danger">Delete</button>&nbsp; &nbsp;
-                                </form>
+                            <div class="row"> 
+                                <div class="col col-1">
+                                    <form method="POST" action="/users/lists/{{movie_list.id}}/edit" class="form-inline">
+                                        <button class="btn btn-sm btn-outline-primary">Edit</button>&nbsp; &nbsp;
+                                    </form>
+                                </div> &nbsp;&nbsp;&nbsp;
+                                <div class="col col-1">
+                                    <form method="DELETE" action="/users/lists/{{movie_list.id}}/delete" class="form-inline">
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>&nbsp; &nbsp;
+                                    </form>
+                                </div>
                             </div>
+                            <small class="comments-number">{{movie_list.comments | length}} &nbsp; Comments </small>
                         </div>
                         {% endif%}
                     </div>
-                    <small class="comments-number">{{movie_list.comments | length}} &nbsp; Comments </small>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
+
     <br>
     {% endfor %}
 </div>
