@@ -3,51 +3,63 @@
 {% block content %}
 <br>
 <div class="container">
-   <div class="jumbotron">
-      <div class="card flex-row flex-wrap movie-details-card">
-         <div class="card-header border-0">
-             <img class="movie-details-poster" src="{{poster}}" alt="">
-         </div>
-         <div class="card-block px-2 movie-details-block">
-            <br>
-            <h4 class="card-title text-center main-movie-card-title"><b>{{title}}</b></h4>
-            <hr>
-            <div class="card-text ratings-text-div movie-card-ratings-div">
-               {% for reviewer,rating in ratings.items() %}
-               <div class="row">
-                  <h5 class="movie-ratings ratings-text">{{reviewer}}: <b class="rating-value">{{rating}}</b></h5>
+   <div class="row">
+      <div class="jumbotron">
+         <div class="card flex-row flex-wrap movie-details-card">
+            <div class=" col col-md-6 col-lg-6 col-xl-6">
+               <div class="card-header border-0">
+                  {% set poster_url = poster %}
+                  {% if poster == 'https://imdb-api.com/images/original/nopicture.jpg' %}
+                  {% set poster_url = '/static/images/no_poster_available.jpg' %}
+                  {% endif %}
+                  <img class="movie-details-poster" src="{{poster_url}}" alt="">
                </div>
-               <br>
-               {% endfor %}
             </div>
-         </div>
-         <div class="add-to-list-form-div">
-            <form action="">
-
-               <div class="btn-group">
-                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" 
-                     id="dropdown" aria-haspopup="true" aria-expanded="false">Add To List
-                  </button>
-                  <div class="dropdown-menu">
-                     {% for movie_list in this_user.lists %}
-                     <a class="dropdown-item" href="/users/lists/{{movie_list.id}}/add-movie/{{imDb_id}}">
-                        {{movie_list.title}}
-                     </a>
+            <div class="ratings-reviewer-col col col-md-6 col-lg-6 col-xl-6">
+               <div class="card-block px-2 movie-details-block">
+                  <h4 class="card-title text-center main-movie-card-title"><b>{{title}}</b></h4>
+                  <hr>
+                  <div class="card-text movie-card-ratings-div">
+                     {% for reviewer,rating in ratings.items() %}
+                     <div class="row">
+                        <div class="col col-sm-3 col-md-6 col-lg-6 col-xl-7">
+                           <h5 class="movie-ratings ratings-text">{{reviewer}}: </h5> 
+                        </div>
+                        <div class="col col-sm-3 col-md-4 col-lg-3 col-xl-3">
+                           <b class="rating-value">{{rating}}</b>
+                        </div>
+                     </div>
+                     <br>
                      {% endfor %}
+                     <br>
                   </div>
                </div>
-
-            </form>
+            </div>
          </div>
-      </div>
-      <hr>
-      <h5 class="text-center plot-tite"><b>Plot</b></h5>
-      <div class="container">
-         <p>{{plot}}</p>
+         <br><hr>
+         <div class="col col-12">
+            <h5 class="text-center plot-tite"><b>Plot</b></h5>
+            <p>{{plot}}</p>
+            <div class="add-to-list-form-div">
+               <form action="">
+                  <div class="btn-group">
+                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" 
+                        id="dropdown" aria-haspopup="true" aria-expanded="false">Add To List
+                     </button>
+                     <div class="dropdown-menu">
+                        {% for movie_list in this_user.lists %}
+                        <a class="dropdown-item" href="/users/lists/{{movie_list.id}}/add-movie/{{imDb_id}}">
+                           {{movie_list.title}}
+                        </a>
+                        {% endfor %}
+                     </div>
+                  </div>
+               </form>
+            </div>
+         </div>
       </div>
    </div>
 </div>
-<hr>
 <div class="container">
    <div class="jumbotron">
       <h1 class="display-5 cast-title">Cast</h1>
@@ -66,7 +78,6 @@
       {% endfor %}
    </div>
 </div>
-
 <div class="container">
    <div class="jumbotron">
       <h1 class="display-5 directors-title">Directors</h1>
@@ -82,7 +93,5 @@
       </div>
    </div>
 </div>
-
-
 {% endblock %}
 
