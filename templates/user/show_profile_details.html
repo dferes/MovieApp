@@ -5,7 +5,7 @@
 <div class="full-width movie-buddy-hero" style="background-image: url('{{ user.header_image_url }}');"></div>
 <img src="{{ user.user_pic_url }}" class="profile-avatar" alt="Image for {{ user.username }}">
 <div class="row full-width">
-  <div class="container">
+  <div class="container profile-stat-bar">
     <div class="row justify-content-end">
       <div class="col-9">
         <ul class="user-stats nav nav-pills">
@@ -80,36 +80,48 @@
   <div class="container">
     <div class="jumbotron recommendation-jumbotron">
       <h2 class="text-center recommendation-title"><b>Based On Your Lists</b></h2>
-       {% for movie in recs %}
-       <div class="card flex-row flex-wrap movie-list-movie-card">
-          <div class="card-header border-0">
-             <a href="/show-movie-details/{{movie.imdb_id}}">
-                <img class="movie-list-movie-image" src="{{movie.poster_url}}" alt="">
-             </a>
+      {% for movie in recs %}
+        {% set poster_url = movie.poster_url %}
+        {% if poster_url == 'https://imdb-api.com/images/original/nopicture.jpg' %}
+        {% set poster_url = '/static/images/no_poster_available.jpg' %}
+        {% endif %}
+        <div class="row">
+          <div class="card flex-row flex-wrap movie-list-movie-card">
+            <div class="col col-xs-2 col-sm-4 col-md-3 col-lg-2">
+              <div class="card-header border-0">
+                <a href="/show-movie-details/{{movie.imdb_id}}">
+                  <img class="movie-list-movie-image" src="{{poster_url}}" alt="">
+                </a>
+              </div>
+            </div>
+            <div class="col col-xs-5 col-sm-8 col-md-9 col-lg-10">
+              <div class="card-block px-2 movie-list-movie-card-block">
+                <br>
+                <a href="/show-movie-details/{{movie.imdb_id}}">
+                  <h5 class="card-title">{{movie.name}}</h5>
+                </a>
+                <br>
+                <p class="card-text list-card-movie-plot">
+                  {{movie.plot}}
+                </p>
+                <hr>
+                {% if movie.name.endswith(')') %}
+                  {% set title = movie.name[:movie.name.find('(')] %}
+                {% else %}
+                  {% set title = movie.name %}
+                {% endif %}
+                <small><a href="https://wikipedia.com/wiki/{{title}}">More about {{title}}</a></small>
+              </div>
+            </div>
           </div>
-          <div class="card-block px-2 movie-list-movie-card-block">
-             <br>
-             <a href="/show-movie-details/{{movie.imdb_id}}">
-                <h5 class="card-title">{{movie.name}}</h5>
-             </a>
-             <br>
-             <p class="card-text list-card-movie-plot">
-                {{movie.plot}}
-             </p>
-             <hr>
-             {% if movie.name.endswith(')') %}
-                {% set title = movie.name[:movie.name.find('(')] %}
-             {% else %}
-                {% set title = movie.name %}
-             {% endif %}
-             <small><a href="https://wikipedia.com/wiki/{{title}}">More about {{title}}</a></small>
-          </div>
-       </div>
-       <hr>
-       {% endfor %}
+        </div>
+      <hr>
+      {% endfor %}
     </div>
   </div>
   {% endif %}
 </div>
 
 {% endblock %}
+
+<!-- 230 -->
