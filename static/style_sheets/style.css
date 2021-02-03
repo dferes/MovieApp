@@ -420,15 +420,8 @@ p.card-bio {
     right: 20%;  
 }
 
-.ratings-text-div {
-    position: absolute;
-    right: 10%;  
-}
-
 .add-to-list-form-div {
-    position: absolute;
-    right: 20%;  
-    bottom: 30%;
+    text-align: center;
 }
 
 .movie-remove-button-div {
@@ -496,7 +489,7 @@ p.card-bio {
 }
 
 .comment-box {
-    width: 66vw;
+    width: 45vw;
     margin-top: 0.875em;
     border-radius: 2rem;
     background-color: #22282b;
@@ -535,12 +528,9 @@ p.card-bio {
     height: 12rem;
 }
 
-.movie-list-movie-card-block {
-    width: 61vw;
-}
-
 .movie-list-movie-image {
     height: 10.5rem;
+    max-width: 7em;
 }
 
 .query-result-card {
@@ -562,8 +552,8 @@ p.card-bio {
 }
 
 .a-movie-list-card-image {
-    height: 8.5rem; 
-    max-width:20vw;
+    height: 8.5rem;
+    width: 22vw;
 }
 
 .a-movie-card-block {
@@ -571,19 +561,24 @@ p.card-bio {
 }
 
 .movie-details-card {
+    width: 100%;
     height: 54vw;
+    max-height: 43em;
+    min-height: 34em;
 }
 
 .movie-details-poster {
-    height: 50vw;
+    max-height: 40em;
+    height: 52vw;
+    min-height: 30em;
 }
 
-.movie-details-block {
-    width: 36vw;
+.ratings-reviewer-col {
+    padding-left: 2.8em;
 }
 
 .movie-card-ratings-div {
-    width: 22vw;
+    padding-left: 3em;
 }
 
 .actors-card {
@@ -594,16 +589,21 @@ p.card-bio {
     height: 8.5rem;
 }
 
-.join-message, .edit-message, .main-movie-card-title, .cast-title, .directors-title, .actor-names {
+.join-message, .edit-message, .cast-title, .directors-title, .actor-names {
     color: white;
 }
 
+.main-movie-card-title {
+    color: white;
+    padding-top: 1em;
+}
+
 .dropdown-menu {
-    background-color: #22282b;
+    background-color: #15181a;
 }
 
 .dropdown-menu a{
-    background-color: #22282b;
+    background-color: #15181a
     color: white;
 }
 
