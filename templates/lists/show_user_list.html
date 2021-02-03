@@ -17,7 +17,6 @@
                {% if this_user.id == user.id %}
                <div class="col list-card-button-area">
                   <div class="row list-card-button-container">
-                     <!-- # PUT/PATCH wont work here. Why? -->
                      <form method="POST" action="/users/lists/{{movie_list.id}}/edit" class="form-inline"> 
                         <button class="btn btn-md btn-outline-primary">Edit</button>&nbsp; &nbsp;
                      </form>
