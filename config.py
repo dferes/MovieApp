@@ -1,5 +1,4 @@
 api_key = 'k_jg1h63to'
-key = 'super_secret_key_42'
 
 # Note that you are limited to 100 API calls per day...
 base_url = f"https://imdb-api.com/en/API/Search/{api_key}"
