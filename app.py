@@ -4,26 +4,27 @@ from flask_debugtoolbar import DebugToolbarExtension
 from models import db, User, MovieList, Movie, Comment
 import requests
 import json
-from config import URL_DICTIONARY, key
+from config import URL_DICTIONARY
 from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, EditListForm
 from user_functions import authenticate, is_following
-from utility_functions import retrieve_movie_details, prepopulate_edit_list_form, update_movie_list_data, validate_and_edit_profile
+from utility_functions import retrieve_movie_details, prepopulate_edit_list_form, update_movie_list_data, validate_and_edit_profile, check_for_duplicates_and_add_to_session
 from utility_functions import add_movie_to_list, validate_and_signup, validate_and_create_movie_list, pre_populate_user_edit_form_fields
 from recommendation_functions import UserMovieRecommendations
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgres:///movie_app_db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', key)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 toolbar = DebugToolbarExtension(app)
 
 db.app = app
 db.init_app(app)
 
 CURRENT_USER_KEY = 'current_user'
+MOVIE_RECOMMENDATIONS = 'movie_recs'
         
 
 def do_login(user):
@@ -33,7 +34,7 @@ def do_login(user):
 def do_logout():
     if CURRENT_USER_KEY in session:
         del session[CURRENT_USER_KEY]
-        
+
         
 def retrieve_users(id):
     user = User.query.get_or_404(id)
@@ -131,7 +132,15 @@ def show_movie_details(imDb_id):
 @app.route('/users/<int:id>')
 def show_user_profile(id):
     user, this_user = retrieve_users(id)
-    recs = UserMovieRecommendations(this_user.actors).collect_recommended_movies(8,2) if this_user==user else None
+    # recs = ActorRecommendations.query.get_or_404(id)
+    # print('-------------------')
+    # print(len(recs))
+    # if this_user.id==user.id and len(recs) < 24:
+    #     all_recs=UserMovieRecommendations(this_user.actors).collect_recommended_movies(8,2)
+    #     recs = check_for_duplicates_and_add_to_session(all_recs, session[MOVIE_RECOMMENDATIONS])
+    recs = None
+    if this_user.id == user.id:
+        recs=UserMovieRecommendations(this_user.actors).collect_recommended_movies(8,2)
 
     return render_template('user/show_profile_details.html', user=user, this_user=this_user, recs=recs)
 
