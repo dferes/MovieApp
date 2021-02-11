@@ -165,10 +165,14 @@ nav + .container {
     color: rgb(10, 5, 5);
     text-align: center;
     padding: 1rem;
-    text-shadow: 0 0 0.4em #030608;
+    text-shadow: 0 0 0.4em rgb(109, 7, 192);
     /* play around with the colors and opacity....looks terrible */
 }
-  
+
+.homepage-text {
+    color: black;
+}
+
 .home-hero .btn {
     text-shadow: none;
     position: relative;
@@ -178,6 +182,7 @@ nav + .container {
   
 .home-hero h1 {
     margin-bottom: 4rem;
+    color: black;
 }
   
 .home-hero:before {
@@ -187,7 +192,7 @@ nav + .container {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.125);
 }
 
 .btn {
