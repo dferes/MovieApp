@@ -75,7 +75,7 @@ class Comment(db.Model):
     list_id = db.Column(db.Integer, db.ForeignKey('movie_lists.id', ondelete='cascade'), nullable=False)
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
-    user = db.relationship('User')
+    user = db.relationship('User') #dont need this here...right? many-to-one relationship can be defined in User model
 
 
 class Actor(db.Model):

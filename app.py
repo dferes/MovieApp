@@ -7,7 +7,7 @@ import json
 from config import URL_DICTIONARY
 from forms import NewUserForm, UserLoginForm, EditUserForm, NewListForm, EditListForm
 from user_functions import authenticate, is_following
-from utility_functions import retrieve_movie_details, prepopulate_edit_list_form, update_movie_list_data, validate_and_edit_profile, check_for_duplicates_and_add_to_session
+from utility_functions import retrieve_movie_details, prepopulate_edit_list_form, update_movie_list_data, validate_and_edit_profile
 from utility_functions import add_movie_to_list, validate_and_signup, validate_and_create_movie_list, pre_populate_user_edit_form_fields
 from recommendation_functions import UserMovieRecommendations
 
@@ -132,12 +132,6 @@ def show_movie_details(imDb_id):
 @app.route('/users/<int:id>')
 def show_user_profile(id):
     user, this_user = retrieve_users(id)
-    # recs = ActorRecommendations.query.get_or_404(id)
-    # print('-------------------')
-    # print(len(recs))
-    # if this_user.id==user.id and len(recs) < 24:
-    #     all_recs=UserMovieRecommendations(this_user.actors).collect_recommended_movies(8,2)
-    #     recs = check_for_duplicates_and_add_to_session(all_recs, session[MOVIE_RECOMMENDATIONS])
     recs = None
     if this_user.id == user.id:
         recs=UserMovieRecommendations(this_user.actors).collect_recommended_movies(8,2)
@@ -263,7 +257,7 @@ def delete_movie_list(movie_list_id):
     return redirect(f"/users/{user_id}")
 
 
-@app.route('/users/lists/<int:list_id>/edit', methods=['GET', 'POST']) # PUT/PATCH wont work here. Why?
+@app.route('/users/lists/<int:list_id>/edit', methods=['GET', 'POST'])
 def edit_user_list(list_id):
     this_user = User.query.get_or_404(session[CURRENT_USER_KEY])
     movie_list = MovieList.query.get_or_404(list_id)
