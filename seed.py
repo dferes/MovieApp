@@ -1,7 +1,6 @@
 from models import db, Follows, MovieList, Movie, Comment, Actor
 from user_functions import signup
 
-db.drop_all()
 db.create_all()
 
 
