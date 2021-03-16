@@ -1,5 +1,3 @@
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -53,16 +51,16 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-[![][product-screenshot]](https://dylan-movie-buddy.herokuapp.com)
-MovieBuddy is an ...
+MovieBuddy is a simple social media platform for movie enthusiasts to create lists of their favorite movies and tv shows and share them with friends they can follow. Users can also comment on eachothers lists.
 
 
 ### API 
 * <a href="https://imdb-api.com">IMDb API</a>
 
 ### Databse Schema
-<!-- Image goes here -->
+  <a href="/">
+    <img src="/static/images/MovieBuddy_schema.png" 
+      width="800" height="500">
 
 ### Built With
 
@@ -111,15 +109,6 @@ To run a local copy of the app
    ```sh
    git clone https://github.com/dferes/MovieBuddy.git
    ```
-
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 
 
